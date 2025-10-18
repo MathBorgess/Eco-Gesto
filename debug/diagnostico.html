@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Eco-Gesto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #4ecca3;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .check-item {
+            background: #16213e;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #666;
+        }
+        
+        .check-item.success {
+            border-left-color: #4ecca3;
+        }
+        
+        .check-item.error {
+            border-left-color: #ff6b6b;
+        }
+        
+        .check-item.waiting {
+            border-left-color: #ffe66d;
+        }
+        
+        .check-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .check-detail {
+            font-size: 14px;
+            color: #aaa;
+            margin-left: 20px;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button:hover {
+            background: #45b393;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .log-container {
+            background: #0f0f1e;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin: 3px 0;
+            padding: 3px;
+        }
+        
+        .log-error {
+            color: #ff6b6b;
+        }
+        
+        .log-success {
+            color: #4ecca3;
+        }
+        
+        .log-info {
+            color: #ffe66d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnóstico do Sistema</h1>
+        
+        <div id="checks"></div>
+        
+        <div class="button-container">
+            <button id="rerunBtn" onclick="location.reload()">🔄 Executar Novamente</button>
+            <button id="goToAppBtn" onclick="window.location.href='index.html'" disabled>
+                ➡️ Ir para Aplicação
+            </button>
+        </div>
+        
+        <div class="log-container">
+            <strong>📋 Log do Console:</strong>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    
+    <script>
+        const checksContainer = document.getElementById('checks');
+        const logContainer = document.getElementById('logContainer');
+        const goToAppBtn = document.getElementById('goToAppBtn');
+        
+        let allChecksPass = true;
+        
+        // Interceptar console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.insertBefore(entry, logContainer.firstChild);
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+        
+        function addCheck(title, status, detail = '') {
+            const item = document.createElement('div');
+            item.className = `check-item ${status}`;
+            
+            let icon = '⏳';
+            if (status === 'success') icon = '✅';
+            if (status === 'error') icon = '❌';
+            
+            item.innerHTML = `
+                <div class="check-title"><span class="icon">${icon}</span> ${title}</div>
+                ${detail ? `<div class="check-detail">${detail}</div>` : ''}
+            `;
+            
+            checksContainer.appendChild(item);
+            
+            if (status === 'error') {
+                allChecksPass = false;
+            }
+        }
+        
+        // Executar verificações
+        async function runDiagnostics() {
+            console.log('🔧 Iniciando diagnóstico...');
+            
+            // 1. Verificar navegador
+            const isChrome = /Chrome/.test(navigator.userAgent);
+            const isFirefox = /Firefox/.test(navigator.userAgent);
+            const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+            
+            if (isChrome || isFirefox) {
+                addCheck('Navegador Compatível', 'success', `${navigator.userAgent}`);
+            } else {
+                addCheck('Navegador', 'error', 'Recomendado: Chrome ou Firefox');
+            }
+            
+            // 2. Verificar HTTPS ou localhost
+            const isSecure = window.location.protocol === 'https:' || 
+                           window.location.hostname === 'localhost' ||
+                           window.location.hostname === '127.0.0.1';
+            
+            if (isSecure) {
+                addCheck('Conexão Segura', 'success', window.location.protocol);
+            } else {
+                addCheck('Conexão Segura', 'error', 'Câmera requer HTTPS ou localhost');
+            }
+            
+            // 3. Verificar MediaPipe Hands
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Esperar carregar
+            
+            if (typeof window.Hands !== 'undefined') {
+                addCheck('MediaPipe Hands', 'success', 'Biblioteca carregada');
+            } else {
+                addCheck('MediaPipe Hands', 'error', 'Biblioteca NÃO carregada - verifique conexão com internet');
+            }
+            
+            // 4. Verificar MediaPipe Pose
+            if (typeof window.Pose !== 'undefined') {
+                addCheck('MediaPipe Pose', 'success', 'Biblioteca carregada');
+            } else {
+                addCheck('MediaPipe Pose', 'error', 'Biblioteca NÃO carregada - verifique conexão com internet');
+            }
+            
+            // 5. Verificar Camera Utils
+            if (typeof window.Camera !== 'undefined') {
+                addCheck('MediaPipe Camera Utils', 'success', 'Biblioteca carregada');
+            } else {
+                addCheck('MediaPipe Camera Utils', 'error', 'Biblioteca NÃO carregada');
+            }
+            
+            // 6. Verificar API de mídia
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                addCheck('API getUserMedia', 'success', 'Disponível');
+                
+                // 7. Tentar acessar câmera
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    addCheck('Acesso à Câmera', 'success', 'Permissão concedida');
+                    
+                    // Parar stream
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // 8. Tentar inicializar MediaPipe
+                    if (typeof window.Hands !== 'undefined') {
+                        try {
+                            const hands = new window.Hands({
+                                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                            });
+                            addCheck('Inicialização MediaPipe Hands', 'success', 'Instância criada');
+                        } catch (e) {
+                            addCheck('Inicialização MediaPipe Hands', 'error', e.message);
+                        }
+                    }
+                    
+                    if (typeof window.Pose !== 'undefined') {
+                        try {
+                            const pose = new window.Pose({
+                                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+                            });
+                            addCheck('Inicialização MediaPipe Pose', 'success', 'Instância criada');
+                        } catch (e) {
+                            addCheck('Inicialização MediaPipe Pose', 'error', e.message);
+                        }
+                    }
+                    
+                } catch (error) {
+                    if (error.name === 'NotAllowedError') {
+                        addCheck('Acesso à Câmera', 'error', 'Permissão NEGADA - clique em "Permitir" na barra do navegador');
+                    } else if (error.name === 'NotFoundError') {
+                        addCheck('Acesso à Câmera', 'error', 'Nenhuma câmera encontrada');
+                    } else {
+                        addCheck('Acesso à Câmera', 'error', error.message);
+                    }
+                }
+            } else {
+                addCheck('API getUserMedia', 'error', 'Não disponível neste navegador');
+            }
+            
+            // 9. Resultado final
+            if (allChecksPass) {
+                addCheck('✨ RESULTADO FINAL', 'success', 'Tudo OK! Sistema pronto para uso.');
+                goToAppBtn.disabled = false;
+                console.log('✅ Diagnóstico completo - Sistema OK!');
+            } else {
+                addCheck('⚠️ RESULTADO FINAL', 'error', 'Alguns problemas encontrados. Corrija os erros acima.');
+                console.error('❌ Diagnóstico completo - Problemas encontrados');
+            }
+        }
+        
+        // Executar ao carregar
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostics, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Gesto - Teste de Detecção</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #4ecca3;
+            margin-bottom: 20px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        video, canvas {
+            display: block;
+            width: 640px;
+            height: 480px;
+            transform: scaleX(-1); /* Espelhar para ficar mais natural */
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .metrics {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+        }
+        
+        .metric {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #0f3460;
+            border-radius: 5px;
+        }
+        
+        .metric-label {
+            color: #4ecca3;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            color: #ffe66d;
+        }
+        
+        .threshold {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .detection-log {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 5px;
+            margin: 5px 0;
+            background: #0f3460;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        .log-hands {
+            border-left: 3px solid #ffe66d;
+        }
+        
+        .log-pose {
+            border-left: 3px solid #4ecca3;
+        }
+        
+        .status {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .status-ok {
+            color: #4ecca3;
+            font-size: 18px;
+        }
+        
+        .status-waiting {
+            color: #ffe66d;
+            font-size: 18px;
+        }
+        
+        .instructions {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            color: #4ecca3;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        .label-legend {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎭 Eco-Gesto - Teste de Detecção</h1>
+    
+    <div class="status" id="status">
+        <div class="status-waiting">⏳ Inicializando...</div>
+    </div>
+    
+    <div class="instructions">
+        <h3>📋 Instruções para Detecção</h3>
+        <ul>
+            <li>🖐️ <strong>Mãos</strong>: Esqueleto amarelo aparece quando suas mãos são detectadas</li>
+            <li>💪 <strong>Braços</strong>: Esqueleto verde (OE=Ombro Esq, OD=Ombro Dir, CE=Cotovelo Esq, CD=Cotovelo Dir, PE=Pulso Esq, PD=Pulso Dir)</li>
+            <li>💡 <strong>Iluminação</strong>: Certifique-se de estar em local bem iluminado</li>
+            <li>📏 <strong>Distância</strong>: Fique a cerca de 1-2 metros da câmera</li>
+            <li>🎯 <strong>Ângulo</strong>: Fique de frente para a câmera</li>
+            <li>👕 <strong>Contraste</strong>: Use roupas que contrastem com o fundo</li>
+        </ul>
+        <div class="label-legend">
+            Se nenhum esqueleto aparecer, o MediaPipe não está detectando. Ajuste a iluminação e posição.
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="video-container">
+            <video id="videoInput" autoplay playsinline></video>
+            <canvas id="poseCanvas"></canvas>
+        </div>
+        
+        <div class="metrics">
+            <h3>📊 Métricas em Tempo Real</h3>
+            
+            <div class="metric">
+                <div class="metric-label">🖐️ Velocidade (Mãos)</div>
+                <div class="metric-value" id="handVelocity">0.0000</div>
+                <div class="threshold">Limite: 0.003</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">💪 Velocidade (Braços)</div>
+                <div class="metric-value" id="poseVelocity">0.0000</div>
+                <div class="threshold">Limite: 0.002</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">⚡ Energia (Mãos)</div>
+                <div class="metric-value" id="handEnergy">0.00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">🔥 Energia (Braços)</div>
+                <div class="metric-value" id="poseEnergy">0.00</div>
+            </div>
+            
+            <div class="metric">
+                <div class="metric-label">🎯 Tipo de Gesto</div>
+                <div class="metric-value" id="gestureType" style="font-size: 16px;">-</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="detection-log">
+        <h3>🔔 Log de Detecções</h3>
+        <div id="logContainer"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    
+    <script type="module">
+        import BodyTracker from './js/modules/BodyTracker.js';
+        
+        let detectionCount = 0;
+        
+        async function init() {
+            const tracker = new BodyTracker();
+            
+            // Interceptar console.log para capturar métricas
+            const originalLog = console.log;
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                
+                const message = args.join(' ');
+                
+                // Capturar features das mãos
+                if (message.includes('📊 Features (Hands):')) {
+                    const data = args[1];
+                    if (data) {
+                        document.getElementById('handVelocity').textContent = data.velocity;
+                        document.getElementById('handEnergy').textContent = data.energy;
+                        document.getElementById('gestureType').textContent = data.type;
+                    }
+                }
+                
+                // Capturar features dos braços
+                if (message.includes('📊 Features (Upper Body):')) {
+                    const data = args[1];
+                    if (data) {
+                        document.getElementById('poseVelocity').textContent = data.velocity;
+                        document.getElementById('poseEnergy').textContent = data.energy;
+                        document.getElementById('gestureType').textContent = data.type;
+                    }
+                }
+                
+                // Log de detecções
+                if (message.includes('GESTO DETECTADO')) {
+                    const logContainer = document.getElementById('logContainer');
+                    const logEntry = document.createElement('div');
+                    logEntry.className = 'log-entry';
+                    
+                    if (message.includes('Mãos')) {
+                        logEntry.classList.add('log-hands');
+                        logEntry.textContent = `👋 #${++detectionCount} - ${args[1]} (Mãos)`;
+                    } else {
+                        logEntry.classList.add('log-pose');
+                        logEntry.textContent = `💪 #${++detectionCount} - ${args[1]} (Braços)`;
+                    }
+                    
+                    logContainer.insertBefore(logEntry, logContainer.firstChild);
+                    
+                    // Manter apenas últimas 10 entradas
+                    while (logContainer.children.length > 10) {
+                        logContainer.removeChild(logContainer.lastChild);
+                    }
+                }
+            };
+            
+            // Configurar callback de gestos
+            tracker.onGestureDetected = (gesture) => {
+                const status = document.getElementById('status');
+                status.innerHTML = `<div class="status-ok">✅ Sistema Detectando! Total: ${detectionCount} gestos</div>`;
+            };
+            
+            await tracker.init();
+            
+            document.getElementById('status').innerHTML = 
+                '<div class="status-ok">✅ Sistema Pronto! Mova suas mãos ou braços</div>';
+        }
+        
+        init().catch(err => {
+            console.error('Erro:', err);
+            document.getElementById('status').innerHTML = 
+                `<div class="status-waiting">❌ Erro: ${err.message}</div>`;
+        });
+    </script>
+</body>
+</html>
