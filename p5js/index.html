@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>p5js Gesture Music Prototype</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+  <style> body { margin:0; background:#111; color:#eee; font-family: sans-serif }</style>
+</head>
+<body>
+<script>
+let video;
+let poseNet;
+let poses = [];
+let osc;
+let playing = false;
+let smooth = {noseY: null, leftX: null, rightX: null, distHands: null};
+
+function setup() {
+  createCanvas(640, 480).id('canvas');
+  video = createCapture(VIDEO);
+  video.size(width, height);
+  video.hide();
+
+  // p5.sound oscillator
+  osc = new p5.Oscillator('sine');
+  osc.amp(0); // start silent
+
+  // PoseNet via ml5
+  poseNet = ml5.poseNet(video, 'single', () => {
+    console.log('poseNet ready');
+  });
+  poseNet.on('pose', (results) => {
+    poses = results;
+  });
+
+  textSize(14);
+  fill(255);
+}
+
+function draw() {
+  background(30);
+  // draw mirrored video
+  push();
+  translate(width, 0);
+  scale(-1, 1);
+  image(video, 0, 0, width, height);
+  pop();
+
+  if (poses.length > 0) {
+    let p = poses[0].pose;
+
+    // get keypoints (if exist)
+    let nose = p.keypoints.find(k => k.part === 'nose');
+    let leftW = p.keypoints.find(k => k.part === 'leftWrist');
+    let rightW = p.keypoints.find(k => k.part === 'rightWrist');
+
+    // compute raw values
+    let noseY = nose && nose.score > 0.4 ? nose.position.y : null;
+    let lx = leftW && leftW.score > 0.4 ? leftW.position.x : null;
+    let rx = rightW && rightW.score > 0.4 ? rightW.position.x : null;
+
+    // distance between hands
+    let distHands = (lx !== null && rx !== null) ? Math.abs(lx - rx) : null;
+
+    // smoothing simple exponential
+    function s(name, val) {
+      if (val === null) return smooth[name];
+      if (smooth[name] === null) smooth[name] = val;
+      smooth[name] = smooth[name] * 0.7 + val * 0.3;
+      return smooth[name];
+    }
+    let snoseY = s('noseY', noseY);
+    let slx = s('leftX', lx);
+    let srx = s('rightX', rx);
+    let sdist = s('distHands', distHands);
+
+    // draw keypoints
+    noStroke();
+    fill(255, 200, 0);
+    if (snoseY) ellipse(width - (nose.position.x), snoseY, 12); // mirrored x
+    fill(0, 200, 255);
+    if (slx) ellipse(width - slx, leftW.position.y, 14);
+    if (srx) ellipse(width - srx, rightW.position.y, 14);
+
+    // Map to sound:
+    //  - noseY (vertical): map to frequency (200 - 1200 Hz), invert because y grows downward
+    //  - distance between hands: map to amplitude (0 - 0.7)
+    //  - right hand x: pan (-1 .. 1)
+    if (snoseY !== null) {
+      let freq = map(snoseY, height, 0, 200, 1200, true);
+      osc.freq(freq);
+    }
+    if (sdist !== null) {
+      // dist 0..width -> amp 0..0.7
+      let amp = map(sdist, 0, width, 0, 0.7, true);
+      osc.amp(amp, 0.05);
+    }
+    if (srx !== null) {
+      // mirrored x -> convert to 0..width then to -1..1
+      let panX = map(width - srx, 0, width, -1, 1, true);
+      osc.pan(panX);
+    }
+
+    // Start oscillator if any keypoint visible and not playing
+    if (!playing && (snoseY || slx || srx)) {
+      osc.start();
+      playing = true;
+    }
+  } else {
+    // no pose detected -> gently fade out
+    osc.amp(0, 0.5);
+    // don't stop osc to avoid clicks; could stop after long timeout
+  }
+
+  // small UI
+  fill(255);
+  textAlign(LEFT);
+  text('Prototipo p5.js + ml5 PoseNet', 10, 20);
+  text('Movimente cabeça/maos para controlar frequencia / volume / pan', 10, 40);
+  text('Se nada aparecer, permita a webcam no navegador', 10, 60);
+}
+
+// optional: click to toggle sound to comply with some browser autoplay rules
+function mousePressed() {
+  userStartAudio(); // request audio context resume
+  // toggle extra: if playing, stop; else start
+  if (playing) {
+    osc.amp(0, 0.2);
+    playing = false;
+  } else {
+    osc.start();
+    osc.amp(0.2, 0.1);
+    playing = true;
+  }
+}
+</script>
+</body>
+</html>
