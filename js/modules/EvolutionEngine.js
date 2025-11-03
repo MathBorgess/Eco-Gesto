@@ -158,6 +158,12 @@ export default class EvolutionEngine {
    * Adiciona variação aleatória proporcional à taxa de mutação
    */
   mutate(value, mutationRate) {
+    // Validar entrada
+    if (!isFinite(value) || isNaN(value)) {
+      console.warn(`⚠️ Valor inválido em mutate: ${value}, retornando 0`);
+      return 0;
+    }
+
     if (Math.random() > mutationRate) {
       return value; // Sem mutação
     }
@@ -171,6 +177,14 @@ export default class EvolutionEngine {
       return value * 0.1; // Valor mínimo
     }
 
+    // Validar saída
+    if (!isFinite(mutated) || isNaN(mutated)) {
+      console.warn(
+        `⚠️ Mutação gerou valor inválido, retornando original: ${value}`
+      );
+      return value;
+    }
+
     return mutated;
   }
 
@@ -178,15 +192,56 @@ export default class EvolutionEngine {
    * Mistura dois valores com peso específico
    */
   blend(value1, value2, weight) {
-    return value1 * (1 - weight) + value2 * weight;
+    // Validar entradas
+    if (!isFinite(value1) || isNaN(value1)) {
+      console.warn(`⚠️ value1 inválido em blend: ${value1}, usando value2`);
+      return value2;
+    }
+    if (!isFinite(value2) || isNaN(value2)) {
+      console.warn(`⚠️ value2 inválido em blend: ${value2}, usando value1`);
+      return value1;
+    }
+    if (!isFinite(weight) || isNaN(weight)) {
+      console.warn(`⚠️ weight inválido em blend: ${weight}, usando 0.5`);
+      weight = 0.5;
+    }
+
+    const result = value1 * (1 - weight) + value2 * weight;
+
+    // Validar saída
+    if (!isFinite(result) || isNaN(result)) {
+      console.warn(
+        `⚠️ Blend gerou valor inválido, retornando value1: ${value1}`
+      );
+      return value1;
+    }
+
+    return result;
   }
 
   /**
    * Mapeia valor de um range para outro
    */
   mapRange(value, inMin, inMax, outMin, outMax) {
+    // Validar entrada
+    if (!isFinite(value) || isNaN(value)) {
+      console.warn(`⚠️ Valor inválido em mapRange: ${value}, usando inMin`);
+      value = inMin;
+    }
+
     const clamped = Math.max(inMin, Math.min(inMax, value));
-    return ((clamped - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+    const result =
+      ((clamped - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+
+    // Validar saída
+    if (!isFinite(result) || isNaN(result)) {
+      console.warn(
+        `⚠️ mapRange gerou valor inválido, retornando outMin: ${outMin}`
+      );
+      return outMin;
+    }
+
+    return result;
   }
 
   /**

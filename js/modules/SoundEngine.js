@@ -30,7 +30,26 @@ export default class SoundEngine {
    * Cria uma nova criatura sonora baseada em um gesto
    */
   createCreatureFromGesture(gesture) {
-    const { features, type, timestamp } = gesture;
+    const { features, type, timestamp, source } = gesture;
+
+    // DEBUG: Log completo das features
+    console.log(
+      "🔍 DEBUG createCreature - features:",
+      JSON.stringify(features, null, 2)
+    );
+
+    // Valores padrão para features que podem não existir
+    const openness = features.openness || features.armSpread || 0.3;
+    const amplitude = features.amplitude || 0.2;
+    const velocity = Math.max(0.001, features.velocity || 0.01); // Evitar zero
+    const energy = Math.max(0.01, features.energy || 0.1); // Evitar zero
+
+    console.log("🔍 DEBUG - valores normalizados:", {
+      openness,
+      amplitude,
+      velocity,
+      energy,
+    });
 
     // Mapear características do gesto para "DNA" sonoro
     const dna = {
@@ -38,32 +57,42 @@ export default class SoundEngine {
       frequency: this.mapRange(features.position.y, 0, 1, 800, 200),
 
       // Volume - mapeado da energia do gesto
-      volume: this.mapRange(features.energy, 0, 1, 0.1, 0.6),
+      volume: this.mapRange(energy, 0, 1, 0.1, 0.6),
 
       // Tipo de onda (timbre base)
       waveType: this.selectWaveType(type, features),
 
       // Taxa de LFO (modulação) - mapeada da velocidade
-      lfoRate: this.mapRange(features.velocity, 0, 0.1, 0.5, 8),
+      lfoRate: this.mapRange(velocity, 0, 0.1, 0.5, 8),
 
       // Profundidade de LFO - mapeada da amplitude
-      lfoDepth: this.mapRange(features.amplitude, 0, 0.5, 10, 200),
+      lfoDepth: this.mapRange(amplitude, 0, 0.5, 10, 200),
 
       // Pan (esquerda/direita) - mapeado da posição X
       pan: this.mapRange(features.position.x, 0, 1, -1, 1),
 
       // Envelope ADSR
       envelope: {
-        attack: this.mapRange(features.velocity, 0, 0.1, 0.5, 0.05),
+        attack: this.mapRange(velocity, 0, 0.1, 0.5, 0.05),
         decay: 0.2,
         sustain: 0.6,
-        release: this.mapRange(features.energy, 0, 1, 1, 0.3),
+        release: this.mapRange(energy, 0, 1, 1, 0.3),
       },
 
       // Filtro
-      filterFreq: this.mapRange(features.openness, 0, 0.5, 400, 2000),
+      filterFreq: this.mapRange(openness, 0, 0.5, 400, 2000),
       filterQ: 5,
     };
+
+    // DEBUG: Verificar DNA final
+    console.log("🔍 DEBUG - DNA criado:", JSON.stringify(dna, null, 2));
+    const hasInvalidValues = Object.entries(dna).some(([key, value]) => {
+      if (key === "envelope" || key === "waveType") return false;
+      return !isFinite(value) || isNaN(value);
+    });
+    if (hasInvalidValues) {
+      console.error("❌ DNA CONTÉM VALORES INVÁLIDOS!", dna);
+    }
 
     // Criar objeto criatura
     const creature = {
@@ -90,6 +119,35 @@ export default class SoundEngine {
     }
 
     const { dna } = creature;
+
+    // VALIDAÇÃO: Garantir que todos os valores são finitos
+    const safeValue = (value, defaultValue) => {
+      const isValid = isFinite(value) && !isNaN(value);
+      if (!isValid) {
+        console.warn(
+          `⚠️ Valor inválido detectado: ${value}, usando default: ${defaultValue}`
+        );
+      }
+      return isValid ? value : defaultValue;
+    };
+
+    const safeDna = {
+      frequency: safeValue(dna.frequency, 440),
+      volume: safeValue(dna.volume, 0.3),
+      waveType: dna.waveType || "sine",
+      lfoRate: safeValue(dna.lfoRate, 2),
+      lfoDepth: safeValue(dna.lfoDepth, 50),
+      pan: safeValue(dna.pan, 0),
+      envelope: {
+        attack: safeValue(dna.envelope.attack, 0.1),
+        decay: safeValue(dna.envelope.decay, 0.2),
+        sustain: safeValue(dna.envelope.sustain, 0.6),
+        release: safeValue(dna.envelope.release, 0.5),
+      },
+      filterFreq: safeValue(dna.filterFreq, 1000),
+      filterQ: safeValue(dna.filterQ, 5),
+    };
+
     const now = this.audioContext.currentTime;
 
     // Criar nós de áudio
@@ -101,32 +159,32 @@ export default class SoundEngine {
     const lfoGain = this.audioContext.createGain();
 
     // Configurar oscilador principal
-    oscillator.type = dna.waveType;
-    oscillator.frequency.value = dna.frequency;
+    oscillator.type = safeDna.waveType;
+    oscillator.frequency.value = safeDna.frequency;
 
     // Configurar LFO (modulação)
-    lfo.frequency.value = dna.lfoRate;
-    lfoGain.gain.value = dna.lfoDepth;
+    lfo.frequency.value = safeDna.lfoRate;
+    lfoGain.gain.value = safeDna.lfoDepth;
     lfo.connect(lfoGain);
     lfoGain.connect(oscillator.frequency);
 
     // Configurar filtro
     filter.type = "lowpass";
-    filter.frequency.value = dna.filterFreq;
-    filter.Q.value = dna.filterQ;
+    filter.frequency.value = safeDna.filterFreq;
+    filter.Q.value = safeDna.filterQ;
 
     // Configurar pan
-    panner.pan.value = dna.pan;
+    panner.pan.value = safeDna.pan;
 
     // Configurar envelope ADSR no gain
     gainNode.gain.value = 0;
     gainNode.gain.linearRampToValueAtTime(
-      dna.volume,
-      now + dna.envelope.attack
+      safeDna.volume,
+      now + safeDna.envelope.attack
     );
     gainNode.gain.linearRampToValueAtTime(
-      dna.volume * dna.envelope.sustain,
-      now + dna.envelope.attack + dna.envelope.decay
+      safeDna.volume * safeDna.envelope.sustain,
+      now + safeDna.envelope.attack + safeDna.envelope.decay
     );
 
     // Conectar cadeia de áudio
@@ -185,8 +243,25 @@ export default class SoundEngine {
    * Utilitários
    */
   mapRange(value, inMin, inMax, outMin, outMax) {
+    // Validar entrada
+    if (!isFinite(value) || isNaN(value)) {
+      console.warn(`⚠️ Valor inválido em mapRange: ${value}, usando inMin`);
+      value = inMin;
+    }
+
     const clamped = Math.max(inMin, Math.min(inMax, value));
-    return ((clamped - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+    const result =
+      ((clamped - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+
+    // Validar saída
+    if (!isFinite(result) || isNaN(result)) {
+      console.warn(
+        `⚠️ mapRange gerou valor inválido, retornando outMin: ${outMin}`
+      );
+      return outMin;
+    }
+
+    return result;
   }
 
   selectWaveType(gestureType, features) {

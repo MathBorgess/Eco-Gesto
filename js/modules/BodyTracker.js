@@ -98,12 +98,15 @@ export default class BodyTracker {
 
       console.log("✅ MediaPipe Pose configurado");
 
+      // Marcar como inicializado ANTES de iniciar a câmera
+      // para evitar race condition no startDetection()
+      this.isInitialized = true;
+
       // Iniciar câmera
       console.log("⏳ Iniciando câmera...");
       await this.setupCamera();
       console.log("✅ Câmera iniciada");
 
-      this.isInitialized = true;
       console.log("✅ BodyTracker inicializado (modo híbrido)");
     } catch (error) {
       console.error("❌ Erro ao inicializar BodyTracker:", error);
@@ -216,7 +219,12 @@ export default class BodyTracker {
       this.canvasElement.height
     );
 
-    // DEBUG: Mostrar status da detecção
+    // Espelhar horizontalmente para corrigir inversão da câmera (APENAS PARA TEXTO)
+    this.canvasCtx.save();
+    this.canvasCtx.scale(-1, 1);
+    this.canvasCtx.translate(-this.canvasElement.width, 0);
+
+    // DEBUG: Mostrar status da detecção (agora não espelhado)
     this.canvasCtx.fillStyle = "#ffe66d";
     this.canvasCtx.font = "16px monospace";
     this.canvasCtx.fillText(
@@ -227,9 +235,11 @@ export default class BodyTracker {
       30
     );
 
+    this.canvasCtx.restore(); // Restaurar transformação para desenhar landmarks normalmente
+
     // Armazenar e processar resultados das mãos
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-      this.previousHandLandmarks = results.multiHandLandmarks[0];
+      const currentHandLandmarks = results.multiHandLandmarks[0];
 
       // DEBUG: Desenhar TODAS as mãos detectadas
       results.multiHandLandmarks.forEach((landmarks, index) => {
@@ -237,7 +247,7 @@ export default class BodyTracker {
       });
 
       // Também detectar gestos pelas mãos!
-      const features = this.extractGestureFeatures(this.previousHandLandmarks);
+      const features = this.extractGestureFeatures(currentHandLandmarks);
 
       if (features) {
         const gestureType = this.classifyGestureType(features);
@@ -257,7 +267,7 @@ export default class BodyTracker {
           const gesture = {
             type: gestureType,
             features: features,
-            landmarks: this.previousHandLandmarks,
+            landmarks: currentHandLandmarks,
             timestamp: currentTime,
             source: "hands",
           };
@@ -271,6 +281,9 @@ export default class BodyTracker {
           this.lastGestureTime = currentTime;
         }
       }
+
+      // IMPORTANTE: Atualizar previousHandLandmarks DEPOIS de calcular features
+      this.previousHandLandmarks = currentHandLandmarks;
     }
 
     this.canvasCtx.restore();
@@ -285,6 +298,11 @@ export default class BodyTracker {
 
     // DEBUG: Desenhar status do pose
     this.canvasCtx.save();
+
+    // Espelhar horizontalmente para texto não espelhado
+    this.canvasCtx.scale(-1, 1);
+    this.canvasCtx.translate(-this.canvasElement.width, 0);
+
     this.canvasCtx.fillStyle = "#4ecca3";
     this.canvasCtx.font = "16px monospace";
     this.canvasCtx.fillText(
@@ -294,19 +312,21 @@ export default class BodyTracker {
     );
 
     if (results.poseLandmarks) {
-      this.previousPoseLandmarks = results.poseLandmarks;
+      const currentPoseLandmarks = results.poseLandmarks;
 
       // DEBUG: Contar landmarks visíveis
-      const visibleCount = results.poseLandmarks.filter(
+      const visibleCount = currentPoseLandmarks.filter(
         (p) => p.visibility > 0.3
       ).length;
       this.canvasCtx.fillText(`👁️ Pontos visíveis: ${visibleCount}/33`, 10, 90);
 
+      this.canvasCtx.restore(); // Restaurar para desenhar landmarks normalmente
+
       // Desenhar esqueleto do torso e braços
-      this.drawUpperBody(results.poseLandmarks);
+      this.drawUpperBody(currentPoseLandmarks);
 
       // Extrair características do movimento do tronco e braços
-      const features = this.extractUpperBodyFeatures(results.poseLandmarks);
+      const features = this.extractUpperBodyFeatures(currentPoseLandmarks);
 
       if (features) {
         // Classificar tipo de gesto
@@ -330,12 +350,12 @@ export default class BodyTracker {
           const gesture = {
             type: gestureType,
             features: features,
-            landmarks: results.poseLandmarks,
+            landmarks: currentPoseLandmarks,
             timestamp: currentTime,
             source: "pose", // Indicar que veio do pose
           };
 
-          console.log("� GESTO DETECTADO (Braços)!", gesture.type);
+          console.log("💪 GESTO DETECTADO (Braços)!", gesture.type);
 
           if (this.onGestureDetected) {
             this.onGestureDetected(gesture);
@@ -344,9 +364,15 @@ export default class BodyTracker {
           this.lastGestureTime = currentTime;
         }
       }
+
+      // IMPORTANTE: Atualizar previousPoseLandmarks DEPOIS de calcular features
+      this.previousPoseLandmarks = currentPoseLandmarks;
     } else {
       // DEBUG: Mostrar por que não detectou
+      this.canvasCtx.scale(-1, 1);
+      this.canvasCtx.translate(-this.canvasElement.width, 0);
       this.canvasCtx.fillText("⚠️ Pose não detectado", 10, 90);
+      this.canvasCtx.restore();
     }
 
     this.canvasCtx.restore();
