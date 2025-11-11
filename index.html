@@ -34,6 +34,7 @@
       <div class="controls">
         <button id="startBtn" class="btn-primary">Iniciar Sistema</button>
         <button id="clearBtn" class="btn-secondary">Limpar Ecossistema</button>
+        
         <div class="slider-control">
           <label for="mutationRate"
             >Taxa de Mutação: <span id="mutationValue">0.1</span></label
@@ -47,6 +48,7 @@
             value="0.1"
           />
         </div>
+        
         <div class="slider-control">
           <label for="maxCreatures"
             >Máx. Criaturas: <span id="maxCreaturesValue">5</span></label
@@ -59,6 +61,43 @@
             step="1"
             value="5"
           />
+        </div>
+
+        <!-- 🆕 Music.AI Controls -->
+        <div class="musicai-controls">
+          <h3>🎼 Music.AI Integration</h3>
+          
+          <div class="toggle-control">
+            <label for="musicAIToggle">
+              <input type="checkbox" id="musicAIToggle" />
+              Ativar Mixagem Profissional
+            </label>
+            <span id="musicAIStatus" class="status-idle">Desativado</span>
+          </div>
+
+          <div class="slider-control">
+            <label for="musicAIInfluence">
+              Influência: <span id="influenceValue">50%</span>
+            </label>
+            <input
+              type="range"
+              id="musicAIInfluence"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.5"
+            />
+            <small>0% = só gene original | 100% = só mixagem</small>
+          </div>
+
+          <div class="musicai-actions">
+            <button id="showHistoryBtn" class="btn-secondary">
+              📜 Histórico (<span id="historyCount">0</span>)
+            </button>
+            <button id="showMetricsBtn" class="btn-secondary">
+              📊 Métricas
+            </button>
+          </div>
         </div>
       </div>
 
