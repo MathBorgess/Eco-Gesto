@@ -130,7 +130,15 @@ Eco-Gesto/
 │   ├── TROUBLESHOOTING-MEDIAPIPE.md # Problemas com MediaPipe
 │   ├── PROJECT_SUMMARY.md         # Resumo do projeto
 │   ├── INDEX.md                   # Índice da documentação
-│   └── REFINAMENTO-DA-IDEIA.md    # 🎯 Como chegamos aqui
+│   ├── REFINAMENTO-DA-IDEIA.md    # 🎯 Como chegamos aqui
+│   │
+│   └── 🆕 Music.AI Integration (v2.0)
+│       ├── MUSICAI_INTEGRATION_PLAN.md    # Plano completo
+│       ├── MUSICAI_INTEGRATION_SPEC.md    # Especificação técnica
+│       ├── QUICKSTART_MUSICAI.md          # Setup rápido
+│       ├── QUALITY_CHECKLIST.md           # Checklist de qualidade
+│       ├── EXECUTIVE_SUMMARY.md           # Resumo executivo
+│       └── ROADMAP_VISUAL.md              # Timeline visual
 │
 └── debug/                         # 🔧 Ferramentas de debug
     ├── test-detection.html        # Teste de detecção
@@ -289,27 +297,58 @@ Geração de material sonoro experimental
 
 ---
 
+## � Music.AI Integration (v2.0) 🆕
+
+### 🎼 Mixagem Evolutiva Profissional
+
+O **Eco-Gesto v2.0** integra-se com a **API Music.AI** para transformar genes sonoros em mixagens profissionais:
+
+- 🎛️ **Mixagem Inteligente**: Cada gesto gera um "gene sonoro" que é mixado profissionalmente
+- 🧬 **Evolução com IA**: API Music.AI processa e aprimora as mixagens evolutivas
+- 🔄 **Fallback Local**: Sistema continua funcionando mesmo sem conexão à API
+- 📊 **Histórico de Mixagens**: Visualize e reproduza mixagens anteriores
+- 🎚️ **Controle de Influência**: Ajuste quanto cada novo gesto afeta o mix
+
+**Status**: 📋 Planejamento Completo | ⏳ Implementação Janeiro 2026
+
+👉 **[Plano Completo de Integração](docs/MUSICAI_INTEGRATION_PLAN.md)**  
+👉 **[Quick Start Guide](docs/QUICKSTART_MUSICAI.md)**  
+👉 **[Especificação Técnica](docs/MUSICAI_INTEGRATION_SPEC.md)**
+
+---
+
 ## 🚧 Roadmap Futuro
 
-### Curto Prazo
+### ✅ v2.0 - Music.AI Integration (Jan 2026)
 
-- [ ] Mais tipos de síntese (FM, AM)
-- [ ] Efeitos (reverb, delay, chorus)
-- [ ] Salvar/carregar jardins sonoros
-- [ ] Exportação de áudio
+- [x] 📋 Planejamento completo
+- [ ] 🎛️ Exportação de genes sonoros (MP3/WAV)
+- [ ] 🌐 Integração com API Music.AI
+- [ ] 💾 Sistema de storage (IndexedDB)
+- [ ] 🎨 UI de controle de mixagem
+- [ ] 📊 Dashboard de métricas
+- [ ] 🧪 Testes completos (≥80% coverage)
 
-### Médio Prazo
+### v2.1 - Enhancements (Q1 2026)
 
-- [ ] Multi-user colaborativo (WebRTC)
-- [ ] Espacialização 3D
-- [ ] Machine learning para gestos
-- [ ] Detecção facial (MediaPipe Face)
+- [ ] Mais formatos de áudio (FLAC, OGG)
+- [ ] Visualização espectral em tempo real
+- [ ] Presets de workflows Music.AI
+- [ ] Share de mixagens (URL pública)
 
-### Longo Prazo
+### v2.2 - Advanced Features (Q2 2026)
 
-- [ ] VR/AR support
-- [ ] Hardware MIDI/OSC
-- [ ] Performance teleparticipativa
+- [ ] Machine learning para sugerir influence
+- [ ] Colaboração multi-usuário
+- [ ] Exportação de projeto completo
+- [ ] Integração com DAWs (Ableton, FL Studio)
+
+### v3.0 - Platform (Q3 2026)
+
+- [ ] Backend dedicado
+- [ ] Contas de usuário
+- [ ] Marketplace de presets
+- [ ] App mobile
 
 ---
 
