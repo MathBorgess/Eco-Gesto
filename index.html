@@ -1,67 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eco-Gesto - Ecossistema de Criaturas Sonoras</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>🌱 Eco-Gesto</h1>
-            <p>Ecossistema de Criaturas Sonoras Evolutivas</p>
-        </header>
+      <header>
+        <h1>🌱 Eco-Gesto</h1>
+        <p>Ecossistema de Criaturas Sonoras Evolutivas</p>
+      </header>
 
-        <div class="main-content">
-            <!-- Área de vídeo e detecção -->
-            <div class="video-section">
-                <video id="videoInput" autoplay playsinline></video>
-                <canvas id="poseCanvas"></canvas>
-            </div>
-
-            <!-- Visualização do ecossistema -->
-            <div class="ecosystem-section">
-                <canvas id="ecosystemCanvas"></canvas>
-                <div id="creatureInfo" class="info-panel">
-                    <h3>Criaturas Ativas: <span id="creatureCount">0</span></h3>
-                    <div id="creaturesList"></div>
-                </div>
-            </div>
+      <div class="main-content">
+        <!-- Área de vídeo e detecção -->
+        <div class="video-section">
+          <video id="videoInput" autoplay playsinline></video>
+          <canvas id="poseCanvas"></canvas>
         </div>
 
-        <!-- Controles -->
-        <div class="controls">
-            <button id="startBtn" class="btn-primary">Iniciar Sistema</button>
-            <button id="clearBtn" class="btn-secondary">Limpar Ecossistema</button>
-            <div class="slider-control">
-                <label for="mutationRate">Taxa de Mutação: <span id="mutationValue">0.1</span></label>
-                <input type="range" id="mutationRate" min="0" max="1" step="0.05" value="0.1">
-            </div>
-            <div class="slider-control">
-                <label for="maxCreatures">Máx. Criaturas: <span id="maxCreaturesValue">5</span></label>
-                <input type="range" id="maxCreatures" min="1" max="10" step="1" value="5">
-            </div>
+        <!-- Visualização do ecossistema -->
+        <div class="ecosystem-section">
+          <canvas id="ecosystemCanvas"></canvas>
+          <div id="creatureInfo" class="info-panel">
+            <h3>Criaturas Ativas: <span id="creatureCount">0</span></h3>
+            <div id="creaturesList"></div>
+          </div>
         </div>
+      </div>
 
-        <!-- Árvore genealógica -->
-        <div class="genealogy-section">
-            <h3>Árvore Genealógica</h3>
-            <canvas id="genealogyCanvas"></canvas>
+      <!-- Controles -->
+      <div class="controls">
+        <button id="startBtn" class="btn-primary">Iniciar Sistema</button>
+        <button id="clearBtn" class="btn-secondary">Limpar Ecossistema</button>
+        <div class="slider-control">
+          <label for="mutationRate"
+            >Taxa de Mutação: <span id="mutationValue">0.1</span></label
+          >
+          <input
+            type="range"
+            id="mutationRate"
+            min="0"
+            max="1"
+            step="0.05"
+            value="0.1"
+          />
         </div>
+        <div class="slider-control">
+          <label for="maxCreatures"
+            >Máx. Criaturas: <span id="maxCreaturesValue">5</span></label
+          >
+          <input
+            type="range"
+            id="maxCreatures"
+            min="1"
+            max="10"
+            step="1"
+            value="5"
+          />
+        </div>
+      </div>
 
-        <!-- Instruções -->
-        <div class="instructions">
-            <h3>Como usar:</h3>
-            <ul>
-                <li>🖐️ <strong>Gesto rápido:</strong> Cria criatura com sons agudos e rápidos</li>
-                <li>✋ <strong>Gesto lento:</strong> Cria criatura com sons graves e lentos</li>
-                <li>🔄 <strong>Gesto circular:</strong> Modula o timbre da criatura</li>
-                <li>↕️ <strong>Movimentos verticais:</strong> Controla o pitch</li>
-                <li>↔️ <strong>Movimentos horizontais:</strong> Controla o pan (esquerda/direita)</li>
-                <li>🧬 <strong>Gestos consecutivos:</strong> Cruzam criaturas existentes gerando híbridos</li>
-            </ul>
-        </div>
+      <!-- Árvore genealógica -->
+      <div class="genealogy-section">
+        <h3>Árvore Genealógica</h3>
+        <canvas id="genealogyCanvas"></canvas>
+      </div>
+
+      <!-- Instruções -->
+      <div class="instructions">
+        <h3>Como usar:</h3>
+        <ul>
+          <li>
+            🖐️ <strong>Gesto rápido:</strong> Cria criatura com sons agudos e
+            rápidos
+          </li>
+          <li>
+            ✋ <strong>Gesto lento:</strong> Cria criatura com sons graves e
+            lentos
+          </li>
+          <li>
+            🔄 <strong>Gesto circular:</strong> Modula o timbre da criatura
+          </li>
+          <li>↕️ <strong>Movimentos verticais:</strong> Controla o pitch</li>
+          <li>
+            ↔️ <strong>Movimentos horizontais:</strong> Controla o pan
+            (esquerda/direita)
+          </li>
+          <li>
+            🧬 <strong>Gestos consecutivos:</strong> Cruzam criaturas existentes
+            gerando híbridos
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Scripts -->
@@ -69,5 +101,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
     <script type="module" src="js/main.js"></script>
-</body>
+  </body>
 </html>

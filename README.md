@@ -9,6 +9,7 @@ Um sistema interativo de composição corporal onde **gestos do performer geram 
 ## 🎯 Conceito
 
 O **Eco-Gesto** transforma o performer em um **cultivador de jardim sonoro**:
+
 - 🌱 Cada gesto é uma **semente** que gera uma criatura sonora
 - 🧬 Criaturas têm **DNA sonoro** (frequência, timbre, envelope, modulação)
 - 🔄 Criaturas **evoluem autonomamente** através de mutação
@@ -17,6 +18,7 @@ O **Eco-Gesto** transforma o performer em um **cultivador de jardim sonoro**:
 - 🎨 Sistema cria **soundscapes emergentes** imprevisíveis
 
 ### Metáfora Central
+
 ```
 Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 ```
@@ -26,12 +28,14 @@ Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 ## ✨ Características
 
 ### 🎭 Interação Corporal
+
 - Detecção via **webcam** (sem hardware especial)
 - **MediaPipe Hands** + **MediaPipe Pose** para captura
 - Reconhece: mãos, braços, torso
 - Classifica gestos: explosivo, sutil, expansivo, contraído, direcional
 
 ### 🎵 Síntese Sonora Evolutiva
+
 - **Web Audio API** para síntese em tempo real
 - Osciladores (sine, square, sawtooth, triangle)
 - Filtros passa-baixa com ressonância
@@ -40,6 +44,7 @@ Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 - Pan estéreo
 
 ### 🧬 Algoritmos Evolutivos
+
 - **Genoma sonoro** extraído de features gestuais
 - **Mutação** com taxa configurável
 - **Cruzamento genético** entre criaturas
@@ -47,6 +52,7 @@ Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 - **Árvore genealógica** visual
 
 ### 🎨 Feedback Visual
+
 - Esqueleto corporal em tempo real (verde/amarelo)
 - Visualização do ecossistema de criaturas
 - Árvore genealógica evolutiva
@@ -61,17 +67,20 @@ Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 **Zero instalação necessária!** Sistema roda no navegador.
 
 1. Clone o repositório:
+
 ```bash
 git clone https://github.com/MathBorgess/Eco-Gesto.git
 cd Eco-Gesto
 ```
 
 2. Inicie um servidor HTTP:
+
 ```bash
 python3 -m http.server 8000
 ```
 
 3. Abra no navegador:
+
 ```
 http://localhost:8000
 ```
@@ -80,7 +89,7 @@ http://localhost:8000
 
 1. **Clique em "Iniciar Sistema"**
 2. **Permita acesso à câmera**
-3. **Faça gestos!** 
+3. **Faça gestos!**
    - Movimentos amplos e rápidos → sons explosivos
    - Movimentos suaves e lentos → sons sutis
    - Braços abertos → sons expansivos
@@ -134,21 +143,25 @@ Eco-Gesto/
 ## 📚 Documentação
 
 ### Guias de Uso
+
 - **[QUICKSTART.md](docs/QUICKSTART.md)** - Comece aqui!
 - **[INSTRUCTIONS.md](docs/INSTRUCTIONS.md)** - Manual completo
 - **[INDEX.md](docs/INDEX.md)** - Índice de toda documentação
 
 ### Documentação Técnica
+
 - **[TECHNICAL.md](docs/TECHNICAL.md)** - Detalhes técnicos
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Arquitetura do sistema
 - **[TESTING.md](docs/TESTING.md)** - Como testar
 
 ### Troubleshooting
+
 - **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Problemas gerais
 - **[DETECCAO-DEBUG.md](docs/DETECCAO-DEBUG.md)** - Debug de detecção
 - **[TROUBLESHOOTING-MEDIAPIPE.md](docs/TROUBLESHOOTING-MEDIAPIPE.md)** - MediaPipe
 
 ### Contexto do Projeto
+
 - **[REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md)** - 🎯 **Como saímos da ideia original para a implementação**
 - **[PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - Resumo executivo
 
@@ -157,19 +170,24 @@ Eco-Gesto/
 ## 🔧 Ferramentas de Debug
 
 ### [debug/diagnostico.html](debug/diagnostico.html)
+
 Sistema de diagnóstico automático que verifica:
+
 - ✅ Navegador compatível
 - ✅ MediaPipe carregado
 - ✅ Câmera funcionando
 - ✅ Sistema inicializado
 
 ### [debug/test-detection.html](debug/test-detection.html)
+
 Teste focado em detecção:
+
 - Métricas em tempo real
 - Log de gestos detectados
 - Visualização de velocidade/energia
 
 ### [debug/debug.html](debug/debug.html)
+
 Debug completo com console interativo
 
 ---
@@ -177,6 +195,7 @@ Debug completo com console interativo
 ## 🎓 Conceitos Implementados
 
 ### 1. **Síntese Sonora Paramétrica**
+
 - Osciladores (sine, square, sawtooth, triangle)
 - Filtros com Q ajustável
 - Envelope ADSR
@@ -184,18 +203,21 @@ Debug completo com console interativo
 - Pan estéreo
 
 ### 2. **Algoritmos Evolutivos**
+
 - Genoma (representação genética)
 - Mutação (taxa configurável)
 - Cruzamento (recombinação genética)
 - Seleção natural (limite populacional)
 
 ### 3. **Motion Capture**
+
 - MediaPipe Pose (33 landmarks corporais)
 - MediaPipe Hands (21 landmarks por mão)
 - Extração de features: velocidade, amplitude, direção, energia
 - Classificação gestual automática
 
 ### 4. **Sistemas Complexos**
+
 - Emergência de comportamento
 - Auto-organização
 - Imprevisibilidade controlada
@@ -206,16 +228,19 @@ Debug completo com console interativo
 ## 🌟 Tecnologias
 
 ### Core
+
 - **HTML5 Canvas** - Visualização
 - **Web Audio API** - Síntese sonora
 - **JavaScript ES6** - Lógica
 
 ### Libraries
+
 - **MediaPipe Hands** v0.4 - Detecção de mãos
 - **MediaPipe Pose** v0.5 - Detecção corporal
 - **MediaPipe Camera Utils** - Gerenciamento de câmera
 
 ### Navegadores Suportados
+
 - ✅ Chrome 90+ (recomendado)
 - ✅ Firefox 88+
 - ✅ Edge 90+
@@ -226,11 +251,13 @@ Debug completo com console interativo
 ## 🎯 Requisitos
 
 ### Mínimos
+
 - Navegador moderno
 - Webcam (qualquer resolução)
 - Conexão internet (para carregar MediaPipe)
 
 ### Recomendados
+
 - Chrome/Firefox
 - Webcam 720p
 - Iluminação adequada
@@ -241,18 +268,23 @@ Debug completo com console interativo
 ## 🎨 Contextos de Uso
 
 ### Performance ao Vivo
+
 Performer controla gestos enquanto público assiste projeção
 
 ### Instalação Interativa
+
 Múltiplos usuários participam sequencialmente
 
 ### Prática Individual
+
 Exploração de timbres e gestos
 
 ### Educação
+
 Ensino de síntese sonora e algoritmos evolutivos
 
 ### Design Sonoro
+
 Geração de material sonoro experimental
 
 ---
@@ -260,18 +292,21 @@ Geração de material sonoro experimental
 ## 🚧 Roadmap Futuro
 
 ### Curto Prazo
+
 - [ ] Mais tipos de síntese (FM, AM)
 - [ ] Efeitos (reverb, delay, chorus)
 - [ ] Salvar/carregar jardins sonoros
 - [ ] Exportação de áudio
 
 ### Médio Prazo
+
 - [ ] Multi-user colaborativo (WebRTC)
 - [ ] Espacialização 3D
 - [ ] Machine learning para gestos
 - [ ] Detecção facial (MediaPipe Face)
 
 ### Longo Prazo
+
 - [ ] VR/AR support
 - [ ] Hardware MIDI/OSC
 - [ ] Performance teleparticipativa
@@ -281,16 +316,19 @@ Geração de material sonoro experimental
 ## 📖 Referências Conceituais
 
 ### Sistemas Generativos
+
 - **Brian Eno** - Música Generativa
 - **Karl Sims** - Evolução de Criaturas Virtuais
 - **Jon McCormack** - Eden (ecossistema evolutivo)
 
 ### Interação Corporal
+
 - **Stelarc** - Extended Body
 - **Troika Ranch** - Isadora
 - **Camille Utterback** - Text Rain
 
 ### Algoritmos Evolutivos em Música
+
 - **Eduardo Reck Miranda** - Evolutionary Computer Music
 - **Gary Lee Nelson** - Procedural composition
 
@@ -335,11 +373,13 @@ Desenvolvido como protótipo de baixa fidelidade para exploração de conceitos 
 ## 📞 Contato e Suporte
 
 ### Problemas?
+
 1. Veja [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 2. Execute `debug/diagnostico.html`
 3. Consulte [DETECCAO-DEBUG.md](docs/DETECCAO-DEBUG.md)
 
 ### Dúvidas Conceituais?
+
 Leia [REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md) para entender a evolução do projeto
 
 ---

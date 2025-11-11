@@ -1,254 +1,255 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #eee;
-    min-height: 100vh;
-    padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #eee;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
 }
 
 header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    color: #4ecca3;
-    text-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: #4ecca3;
+  text-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
 }
 
 header p {
-    color: #93b5c6;
-    font-size: 1.1em;
+  color: #93b5c6;
+  font-size: 1.1em;
 }
 
 .main-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.video-section, .ecosystem-section {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 20px;
-    position: relative;
+.video-section,
+.ecosystem-section {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 20px;
+  position: relative;
 }
 
 #videoInput {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    display: block;
-    transform: scaleX(-1);
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  transform: scaleX(-1);
 }
 
 #poseCanvas {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: calc(100% - 40px);
-    height: auto;
-    pointer-events: none;
-    border-radius: 10px;
-    transform: scaleX(-1); /* Espelhar junto com o vídeo */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: calc(100% - 40px);
+  height: auto;
+  pointer-events: none;
+  border-radius: 10px;
+  transform: scaleX(-1); /* Espelhar junto com o vídeo */
 }
 
 #ecosystemCanvas {
-    width: 100%;
-    height: 400px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    display: block;
+  width: 100%;
+  height: 400px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  display: block;
 }
 
 .info-panel {
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(78, 204, 163, 0.1);
-    border-radius: 10px;
-    border: 1px solid rgba(78, 204, 163, 0.3);
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(78, 204, 163, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(78, 204, 163, 0.3);
 }
 
 .info-panel h3 {
-    color: #4ecca3;
-    margin-bottom: 10px;
+  color: #4ecca3;
+  margin-bottom: 10px;
 }
 
 #creaturesList {
-    max-height: 200px;
-    overflow-y: auto;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .creature-item {
-    padding: 8px;
-    margin: 5px 0;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
-    font-size: 0.9em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  padding: 8px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  font-size: 0.9em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .creature-item .creature-name {
-    font-weight: bold;
-    color: #4ecca3;
+  font-weight: bold;
+  color: #4ecca3;
 }
 
 .creature-item .creature-params {
-    font-size: 0.8em;
-    color: #93b5c6;
+  font-size: 0.8em;
+  color: #93b5c6;
 }
 
 .controls {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 15px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 button {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 .btn-primary {
-    background: #4ecca3;
-    color: #1a1a2e;
+  background: #4ecca3;
+  color: #1a1a2e;
 }
 
 .btn-primary:hover {
-    background: #45b893;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+  background: #45b893;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
 }
 
 .btn-secondary {
-    background: #e94560;
-    color: white;
+  background: #e94560;
+  color: white;
 }
 
 .btn-secondary:hover {
-    background: #d63851;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+  background: #d63851;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
 }
 
 .slider-control {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .slider-control label {
-    font-size: 0.9em;
-    color: #93b5c6;
+  font-size: 0.9em;
+  color: #93b5c6;
 }
 
 .slider-control input[type="range"] {
-    width: 200px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    outline: none;
+  width: 200px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
 }
 
 .slider-control input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #4ecca3;
-    border-radius: 50%;
-    cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #4ecca3;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .genealogy-section {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
 }
 
 .genealogy-section h3 {
-    color: #4ecca3;
-    margin-bottom: 15px;
+  color: #4ecca3;
+  margin-bottom: 15px;
 }
 
 #genealogyCanvas {
-    width: 100%;
-    height: 300px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    display: block;
+  width: 100%;
+  height: 300px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  display: block;
 }
 
 .instructions {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 15px;
 }
 
 .instructions h3 {
-    color: #4ecca3;
-    margin-bottom: 15px;
+  color: #4ecca3;
+  margin-bottom: 15px;
 }
 
 .instructions ul {
-    list-style: none;
-    padding-left: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 .instructions li {
-    padding: 10px;
-    margin: 8px 0;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border-left: 3px solid #4ecca3;
+  padding: 10px;
+  margin: 8px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #4ecca3;
 }
 
 .instructions strong {
-    color: #4ecca3;
+  color: #4ecca3;
 }
 
 /* Responsividade */
 @media (max-width: 968px) {
-    .main-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .controls {
-        flex-direction: column;
-    }
-    
-    .slider-control input[type="range"] {
-        width: 100%;
-    }
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .slider-control input[type="range"] {
+    width: 100%;
+  }
 }

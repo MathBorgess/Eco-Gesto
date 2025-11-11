@@ -14,40 +14,40 @@ Novo no projeto? Comece aqui:
 
 ### 🎯 Entendendo o Projeto
 
-| Documento | Descrição | Para quem? |
-|-----------|-----------|------------|
+| Documento                                                        | Descrição                                             | Para quem?                 |
+| ---------------------------------------------------------------- | ----------------------------------------------------- | -------------------------- |
 | **[docs/REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md)** | 🌟 Como saímos da ideia original para a implementação | Todos - leitura essencial! |
-| **[docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** | Resumo executivo do projeto | Visão geral rápida |
-| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Arquitetura do sistema | Desenvolvedores |
+| **[docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)**           | Resumo executivo do projeto                           | Visão geral rápida         |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**                 | Arquitetura do sistema                                | Desenvolvedores            |
 
 ---
 
 ### 📖 Guias de Uso
 
-| Documento | Conteúdo | Quando usar? |
-|-----------|----------|--------------|
-| **[docs/QUICKSTART.md](docs/QUICKSTART.md)** | Guia rápido (5 min) | Primeira vez usando |
-| **[docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md)** | Manual completo | Uso detalhado |
-| **[docs/TESTING.md](docs/TESTING.md)** | Como testar o sistema | Validação e testes |
+| Documento                                        | Conteúdo              | Quando usar?        |
+| ------------------------------------------------ | --------------------- | ------------------- |
+| **[docs/QUICKSTART.md](docs/QUICKSTART.md)**     | Guia rápido (5 min)   | Primeira vez usando |
+| **[docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md)** | Manual completo       | Uso detalhado       |
+| **[docs/TESTING.md](docs/TESTING.md)**           | Como testar o sistema | Validação e testes  |
 
 ---
 
 ### 🔧 Troubleshooting
 
-| Documento | Problema que resolve | Quando consultar? |
-|-----------|---------------------|-------------------|
-| **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** | Problemas gerais | Qualquer erro |
-| **[docs/TROUBLESHOOTING-MEDIAPIPE.md](docs/TROUBLESHOOTING-MEDIAPIPE.md)** | MediaPipe não inicia | Sistema não carrega |
-| **[docs/DETECCAO-DEBUG.md](docs/DETECCAO-DEBUG.md)** | Detecção não funciona | Não detecta gestos |
+| Documento                                                                  | Problema que resolve  | Quando consultar?   |
+| -------------------------------------------------------------------------- | --------------------- | ------------------- |
+| **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**                     | Problemas gerais      | Qualquer erro       |
+| **[docs/TROUBLESHOOTING-MEDIAPIPE.md](docs/TROUBLESHOOTING-MEDIAPIPE.md)** | MediaPipe não inicia  | Sistema não carrega |
+| **[docs/DETECCAO-DEBUG.md](docs/DETECCAO-DEBUG.md)**                       | Detecção não funciona | Não detecta gestos  |
 
 ---
 
 ### 💻 Documentação Técnica
 
-| Documento | Conteúdo | Público |
-|-----------|----------|---------|
-| **[docs/TECHNICAL.md](docs/TECHNICAL.md)** | Detalhes técnicos completos | Desenvolvedores |
-| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Arquitetura do código | Desenvolvedores |
+| Documento                                        | Conteúdo                    | Público         |
+| ------------------------------------------------ | --------------------------- | --------------- |
+| **[docs/TECHNICAL.md](docs/TECHNICAL.md)**       | Detalhes técnicos completos | Desenvolvedores |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Arquitetura do código       | Desenvolvedores |
 
 ---
 
@@ -55,17 +55,18 @@ Novo no projeto? Comece aqui:
 
 ### Páginas Interativas
 
-| Ferramenta | Uso | Acesso |
-|------------|-----|--------|
-| **[debug/diagnostico.html](debug/diagnostico.html)** | Diagnóstico automático do sistema | `http://localhost:8000/debug/diagnostico.html` |
-| **[debug/test-detection.html](debug/test-detection.html)** | Teste de detecção com métricas | `http://localhost:8000/debug/test-detection.html` |
-| **[debug/debug.html](debug/debug.html)** | Console de debug completo | `http://localhost:8000/debug/debug.html` |
+| Ferramenta                                                 | Uso                               | Acesso                                            |
+| ---------------------------------------------------------- | --------------------------------- | ------------------------------------------------- |
+| **[debug/diagnostico.html](debug/diagnostico.html)**       | Diagnóstico automático do sistema | `http://localhost:8000/debug/diagnostico.html`    |
+| **[debug/test-detection.html](debug/test-detection.html)** | Teste de detecção com métricas    | `http://localhost:8000/debug/test-detection.html` |
+| **[debug/debug.html](debug/debug.html)**                   | Console de debug completo         | `http://localhost:8000/debug/debug.html`          |
 
 ---
 
 ## 🎯 Fluxo de Leitura Recomendado
 
 ### Para Usuários (Artistas/Performers)
+
 ```
 1. README.md
 2. docs/QUICKSTART.md
@@ -74,6 +75,7 @@ Novo no projeto? Comece aqui:
 ```
 
 ### Para Desenvolvedores
+
 ```
 1. README.md
 2. docs/REFINAMENTO-DA-IDEIA.md (contexto conceitual!)
@@ -83,6 +85,7 @@ Novo no projeto? Comece aqui:
 ```
 
 ### Para Quem Tem Problemas
+
 ```
 1. debug/diagnostico.html (execute primeiro!)
 2. docs/TROUBLESHOOTING-MEDIAPIPE.md
@@ -91,6 +94,7 @@ Novo no projeto? Comece aqui:
 ```
 
 ### Para Estudantes/Pesquisadores
+
 ```
 1. README.md
 2. docs/REFINAMENTO-DA-IDEIA.md (essencial!)
@@ -143,21 +147,27 @@ Eco-Gesto/
 ## 🎯 Documentos Essenciais por Objetivo
 
 ### "Quero entender o projeto"
+
 → **[README.md](README.md)** + **[docs/REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md)**
 
 ### "Quero usar o sistema"
+
 → **[docs/QUICKSTART.md](docs/QUICKSTART.md)** + **[docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md)**
 
 ### "Tenho um problema"
+
 → **[debug/diagnostico.html](debug/diagnostico.html)** → **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**
 
 ### "Quero modificar o código"
+
 → **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** + **[docs/TECHNICAL.md](docs/TECHNICAL.md)**
 
 ### "Não detecta meus gestos"
+
 → **[docs/DETECCAO-DEBUG.md](docs/DETECCAO-DEBUG.md)** + **[debug/test-detection.html](debug/test-detection.html)**
 
 ### "MediaPipe não carrega"
+
 → **[docs/TROUBLESHOOTING-MEDIAPIPE.md](docs/TROUBLESHOOTING-MEDIAPIPE.md)** + **[debug/diagnostico.html](debug/diagnostico.html)**
 
 ---
@@ -170,6 +180,7 @@ Eco-Gesto/
 - **Ferramentas de debug**: 3 páginas interativas
 
 ### Distribuição:
+
 - 📖 **Guias de Uso**: 3 documentos (~5,000 palavras)
 - 🔧 **Troubleshooting**: 3 documentos (~8,000 palavras)
 - 💻 **Técnica**: 2 documentos (~6,000 palavras)
@@ -180,9 +191,11 @@ Eco-Gesto/
 ## 🌟 Documento Destacado
 
 ### [docs/REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md)
+
 **O documento mais importante para entender o projeto!**
 
 Este documento explica:
+
 - ✅ A ideia original ("Instrumento Corporal Imersivo")
 - ✅ Decisões de design tomadas
 - ✅ Por que escolhemos web ao invés de Unity
@@ -207,7 +220,7 @@ Este documento explica:
 **"Evolução"** → [docs/TECHNICAL.md](docs/TECHNICAL.md) (seção Algoritmos Evolutivos)  
 **"Síntese"** → [docs/TECHNICAL.md](docs/TECHNICAL.md) (seção SoundEngine)  
 **"História"** → [docs/REFINAMENTO-DA-IDEIA.md](docs/REFINAMENTO-DA-IDEIA.md)  
-**"Testes"** → [docs/TESTING.md](docs/TESTING.md)  
+**"Testes"** → [docs/TESTING.md](docs/TESTING.md)
 
 ---
 
