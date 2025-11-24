@@ -43,7 +43,9 @@ class EcoGestoSystem {
 
   setupEventListeners() {
     // Botão de iniciar
-    document.getElementById('startBtn').addEventListener('click', () => {
+    document.getElementById('startBtn').addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation();
       this.toggleSystem();
     });
 
@@ -109,37 +111,46 @@ class EcoGestoSystem {
 
   async toggleSystem() {
     const startBtn = document.getElementById('startBtn');
+    console.log('🔄 toggleSystem chamado. isRunning:', this.isRunning);
 
     if (!this.isRunning) {
       try {
-        // Inicializar módulos
+        console.log('📸 Inicializando BodyTracker...');
         await this.bodyTracker.init();
+        
+        console.log('🎵 Inicializando SoundEngine...');
         await this.soundEngine.init();
+        
+        console.log('🎨 Inicializando VisualFeedback...');
         this.visualFeedback.init();
 
         // Configurar callback de detecção de gestos
         this.bodyTracker.onGestureDetected = gesture => {
+          console.log('📣 Callback onGestureDetected chamado!');
           this.handleGesture(gesture);
         };
+
+        this.isRunning = true;
+        console.log('✅ isRunning setado para TRUE');
 
         // Inicializar Music.AI se estiver habilitado
         if (this.config.musicAI.enabled && !this.mixManager) {
           await this.initMusicAI();
         }
 
-        // Iniciar loop de atualização visual
+        console.log('🎬 Iniciando loop de visualização...');
         this.startVisualizationLoop();
 
-        this.isRunning = true;
         startBtn.textContent = 'Parar Sistema';
         startBtn.classList.add('active');
 
-        console.log('✅ Sistema Eco-Gesto iniciado!');
+        console.log('✅ Sistema Eco-Gesto iniciado! isRunning:', this.isRunning);
       } catch (error) {
-        console.error('Erro ao iniciar sistema:', error);
+        console.error('❌ Erro ao iniciar sistema:', error);
         alert('Erro ao iniciar sistema. Verifique as permissões da câmera.');
       }
     } else {
+      console.log('⏹️ Parando sistema...');
       this.bodyTracker.stop();
       this.clearEcosystem();
       this.isRunning = false;
@@ -238,6 +249,7 @@ class EcoGestoSystem {
   }
 
   handleGesture(gesture) {
+    console.log('🖐️ handleGesture CHAMADO!');
     const currentTime = Date.now();
     const timeSinceLastGesture = currentTime - this.lastGestureTime;
 
@@ -251,19 +263,27 @@ class EcoGestoSystem {
       timeSinceLastGesture < this.config.gestureTimeout &&
       Math.random() < this.config.crossoverThreshold
     ) {
-      // CRUZAMENTO: Criar híbrido de duas criaturas existentes
+      // CRUZAMENTO
       newCreature = this.breedCreatures(gesture);
       console.log('🧬 Cruzamento realizado! Nova criatura híbrida gerada');
       this.consecutiveGestures++;
     } else {
-      // CRIAÇÃO NOVA: Gerar criatura original do gesto
+      // CRIAÇÃO NOVA
+      console.log('🌱 Criando criatura do gesto...');
       newCreature = this.soundEngine.createCreatureFromGesture(gesture);
-      console.log('🌱 Nova criatura original gerada');
+      console.log('🌱 Nova criatura criada:', newCreature);
+      console.log('🌱 Criatura tem cor?', newCreature.dna.color);
       this.consecutiveGestures = 0;
     }
 
+    console.log('🔍 Criatura antes de adicionar:', newCreature);
+    console.log('🔍 Array creatures antes:', this.creatures.length);
+    
     // Adicionar ao ecossistema
     this.addCreature(newCreature);
+    
+    console.log('🔍 Array creatures depois:', this.creatures.length);
+    console.log('🔍 Creatures array completo:', this.creatures);
 
     // Processar com Music.AI se habilitado
     if (this.config.musicAI.enabled && this.mixManager) {
@@ -281,7 +301,7 @@ class EcoGestoSystem {
 
     // Atualizar visualização
     this.updateCreatureList();
-  }
+}
 
   async processMusicAI(creature) {
     try {
@@ -343,8 +363,13 @@ class EcoGestoSystem {
   }
 
   addCreature(creature) {
+    console.log('➕ addCreature chamado. Criatura:', creature.id);
+    
     // Adicionar ao pool
     this.creatures.push(creature);
+    
+    console.log('📊 Total de criaturas agora:', this.creatures.length);
+    console.log('📋 Array creatures:', this.creatures);
 
     // Manter limite de criaturas
     this.maintainCreatureLimit();
@@ -569,11 +594,26 @@ class EcoGestoSystem {
       .join('');
   }
 
-  startVisualizationLoop() {
+startVisualizationLoop() {
+    console.log('🎬 startVisualizationLoop INICIADO. isRunning:', this.isRunning);
+    
+    let frameCount = 0;
+    
     const update = () => {
-      if (!this.isRunning) return;
+      if (!this.isRunning) {
+        console.log('⚠️ Loop parado porque isRunning =', this.isRunning);
+        return;
+      }
+
+      frameCount++;
+      
+      // Log a cada 60 frames (aproximadamente 1 segundo)
+      if (frameCount % 60 === 0) {
+        console.log(`🔄 Frame ${frameCount} - Criaturas: ${this.creatures.length}`);
+      }
 
       // Atualizar visualização do ecossistema
+      console.log("🎨 Frame executado. Criaturas:", this.creatures.length);
       this.visualFeedback.drawEcosystem(this.creatures);
 
       // Atualizar árvore genealógica
@@ -588,6 +628,7 @@ class EcoGestoSystem {
       requestAnimationFrame(update);
     };
 
+    console.log('🎬 Chamando primeira iteração do update...');
     update();
   }
 }
@@ -597,4 +638,15 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log('🌱 Inicializando Eco-Gesto...');
   const system = new EcoGestoSystem();
   window.ecoGestoSystem = system; // Expor globalmente para debug
+
+window.addEventListener('beforeunload', (e) => {
+  console.log('⚠️ Página tentando descarregar!');
+});
+
+document.addEventListener('click', (e) => {
+  console.log('🖱️ Clique em:', e.target);
+  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+    console.log('🖱️ Elemento:', e.target.outerHTML);
+  }
+})
 });

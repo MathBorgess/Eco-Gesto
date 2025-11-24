@@ -94,7 +94,12 @@ export default class SoundEngine {
             ...soundProfile,
             volume: this.mapRange(energy, 0, 1, 0.08, 0.4),
             pan: this.mapRange(features.position.x, 0, 1, -0.9, 0.9),
-            birthTime: timestamp
+            birthTime: timestamp,
+            color: this.generateColorFromSound(soundProfile, features),
+            initialPosition: {
+                x: Math.random(), // 0 a 1
+                y: Math.random()  // 0 a 1
+            }
         };
         
         // Criar objeto criatura
@@ -108,7 +113,11 @@ export default class SoundEngine {
             instrumentType: soundProfile.instrumentType,
             gestureOrigin: features
         };
-        
+
+        console.log('🎵 SoundEngine criou criatura:', creature);
+        console.log('🎵 DNA da criatura:', creature.dna);
+        console.log('🎵 Cor da criatura:', creature.dna.color);
+                
         return creature;
     }
     
@@ -526,4 +535,34 @@ export default class SoundEngine {
         this.setMusicalScale(scaleName);
         console.log(`🎼 Escala alterada para: ${scaleName}`);
     }
+
+    /**
+ * Gera cor baseada nas características sonoras
+ */
+generateColorFromSound(soundProfile, features) {
+    // Mapear instrumento para matiz base
+    const instrumentHues = {
+        'harp': 200,      // Azul claro
+        'flute': 280,     // Roxo/Violeta
+        'piano': 30,      // Laranja
+        'strings': 120,   // Verde
+        'brass': 0,       // Vermelho
+        'bass': 240,      // Azul escuro
+        'synth': 180      // Ciano
+    };
+    
+    const baseHue = instrumentHues[soundProfile.instrumentType] || 180;
+    
+    // Variar matiz baseado na frequência
+    const hueVariation = (soundProfile.frequency - 220) / 10;
+    const hue = (baseHue + hueVariation) % 360;
+    
+    // Saturação baseada na energia
+    const saturation = this.mapRange(features.energy, 0, 1, 50, 100);
+    
+    // Luminosidade baseada na amplitude
+    const lightness = this.mapRange(features.amplitude, 0, 1, 40, 70);
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
 }
