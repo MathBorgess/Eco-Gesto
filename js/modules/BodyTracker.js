@@ -1,13 +1,12 @@
 /**
- * BodyTracker - Módulo de Captura e Análise Corporal
- * Detecta gestos usando MediaPipe Hands E Pose (tronco + braços)
- * Foco em detecção parcial: não precisa corpo inteiro, apenas peito e braços
+ * BodyTracker - Módulo de Captura e Análise de Gestos com Mãos
+ * Detecta gestos usando apenas MediaPipe Hands
+ * Versão simplificada focada exclusivamente em detecção de mãos
  */
 
 export default class BodyTracker {
   constructor() {
     this.hands = null;
-    this.pose = null;
     this.camera = null;
     this.videoElement = null;
     this.canvasElement = null;
@@ -18,30 +17,22 @@ export default class BodyTracker {
 
     // Estado para análise de movimento
     this.previousHandLandmarks = null;
-    this.previousPoseLandmarks = null;
     this.gestureStartTime = null;
     this.movementHistory = [];
     this.lastGestureType = null;
-    this.gestureDebounceTime = 500; // ms entre detecções (reduzido de 800 para 500)
+    this.gestureDebounceTime = 500; // ms entre detecções
     this.lastGestureTime = 0;
-
-    // Modo de detecção: 'hands', 'pose', ou 'hybrid'
-    this.detectionMode = "hybrid"; // Usar ambos para maior robustez
   }
 
   async init() {
-    console.log("🎥 Inicializando BodyTracker (Hands + Pose)...");
+    console.log("🎥 Inicializando BodyTracker (Hands Only)...");
 
-    // Verificar se MediaPipe está disponível
+    // Verificar se MediaPipe Hands está disponível
     if (typeof window.Hands === "undefined") {
       console.error("❌ MediaPipe Hands NÃO está carregado! Verifique o CDN.");
       throw new Error("MediaPipe Hands não carregado");
     }
-    if (typeof window.Pose === "undefined") {
-      console.error("❌ MediaPipe Pose NÃO está carregado! Verifique o CDN.");
-      throw new Error("MediaPipe Pose não carregado");
-    }
-    console.log("✅ MediaPipe libraries disponíveis");
+    console.log("✅ MediaPipe Hands disponível");
 
     this.videoElement = document.getElementById("videoInput");
     this.canvasElement = document.getElementById("poseCanvas");
@@ -70,36 +61,15 @@ export default class BodyTracker {
       this.hands.setOptions({
         maxNumHands: 2,
         modelComplexity: 1,
-        minDetectionConfidence: 0.3, // Reduzido de 0.5 para 0.3
-        minTrackingConfidence: 0.3, // Reduzido de 0.5 para 0.3
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
       });
 
       this.hands.onResults((results) => this.onHandsResults(results));
 
       console.log("✅ MediaPipe Hands configurado");
 
-      console.log("⏳ Configurando MediaPipe Pose...");
-      // Configurar MediaPipe Pose (tronco e braços)
-      this.pose = new window.Pose({
-        locateFile: (file) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-        },
-      });
-
-      this.pose.setOptions({
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        minDetectionConfidence: 0.3, // Reduzido de 0.5 para 0.3
-        minTrackingConfidence: 0.3, // Reduzido de 0.5 para 0.3
-      });
-
-      this.pose.onResults((results) => this.onPoseResults(results));
-
-      console.log("✅ MediaPipe Pose configurado");
-
       // Marcar como inicializado ANTES de iniciar a câmera
-      // para evitar race condition no startDetection()
       this.isInitialized = true;
 
       // Iniciar câmera
@@ -107,7 +77,7 @@ export default class BodyTracker {
       await this.setupCamera();
       console.log("✅ Câmera iniciada");
 
-      console.log("✅ BodyTracker inicializado (modo híbrido)");
+      console.log("✅ BodyTracker inicializado (modo mãos apenas)");
     } catch (error) {
       console.error("❌ Erro ao inicializar BodyTracker:", error);
       console.error("Stack trace:", error.stack);
@@ -179,14 +149,7 @@ export default class BodyTracker {
       }
 
       try {
-        // Alternar entre hands e pose para economizar processamento
-        // Hands a cada frame, Pose a cada 2 frames
         await this.hands.send({ image: this.videoElement });
-
-        if (frameCount % 2 === 0) {
-          await this.pose.send({ image: this.videoElement });
-        }
-
         frameCount++;
 
         // Log a cada 5 segundos para não poluir o console
@@ -210,7 +173,13 @@ export default class BodyTracker {
   }
 
   onHandsResults(results) {
-    // DEBUG: Limpar e desenhar no canvas a cada frame
+    // Ajustar tamanho do canvas se necessário
+    if (results.image && this.canvasElement.width !== results.image.width) {
+      this.canvasElement.width = results.image.width;
+      this.canvasElement.height = results.image.height;
+    }
+
+    // Limpar canvas
     this.canvasCtx.save();
     this.canvasCtx.clearRect(
       0,
@@ -219,12 +188,12 @@ export default class BodyTracker {
       this.canvasElement.height
     );
 
-    // Espelhar horizontalmente para corrigir inversão da câmera (APENAS PARA TEXTO)
+    // Espelhar horizontalmente para texto
     this.canvasCtx.save();
     this.canvasCtx.scale(-1, 1);
     this.canvasCtx.translate(-this.canvasElement.width, 0);
 
-    // DEBUG: Mostrar status da detecção (agora não espelhado)
+    // Mostrar status da detecção
     this.canvasCtx.fillStyle = "#ffe66d";
     this.canvasCtx.font = "16px monospace";
     this.canvasCtx.fillText(
@@ -235,33 +204,29 @@ export default class BodyTracker {
       30
     );
 
-    this.canvasCtx.restore(); // Restaurar transformação para desenhar landmarks normalmente
+    this.canvasCtx.restore();
 
-    // Armazenar e processar resultados das mãos
+    // Processar mãos detectadas
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
       const currentHandLandmarks = results.multiHandLandmarks[0];
 
-      // DEBUG: Desenhar TODAS as mãos detectadas
-      results.multiHandLandmarks.forEach((landmarks, index) => {
+      // Desenhar todas as mãos
+      results.multiHandLandmarks.forEach((landmarks) => {
         this.drawHands(landmarks);
       });
 
-      // Também detectar gestos pelas mãos!
+      // Extrair características do gesto
       const features = this.extractGestureFeatures(currentHandLandmarks);
 
       if (features) {
         const gestureType = this.classifyGestureType(features);
         const currentTime = Date.now();
+        
+        console.log(`📍 Posição: X=${features.position.x.toFixed(2)}, Y=${features.position.y.toFixed(2)}`);
 
-        console.log("📊 Features (Hands):", {
-          velocity: features.velocity.toFixed(4),
-          energy: features.energy.toFixed(4),
-          type: gestureType,
-        });
-
-        // Threshold MUITO reduzido para mãos também
+        // Detectar gestos significativos
         if (
-          features.velocity > 0.003 &&
+          features.velocity > 0.005 &&
           currentTime - this.lastGestureTime > this.gestureDebounceTime
         ) {
           const gesture = {
@@ -272,7 +237,7 @@ export default class BodyTracker {
             source: "hands",
           };
 
-          console.log("👋 GESTO DETECTADO (Mãos)!", gesture.type);
+          console.log("👋 GESTO DETECTADO!", gesture.type);
 
           if (this.onGestureDetected) {
             this.onGestureDetected(gesture);
@@ -282,219 +247,13 @@ export default class BodyTracker {
         }
       }
 
-      // IMPORTANTE: Atualizar previousHandLandmarks DEPOIS de calcular features
       this.previousHandLandmarks = currentHandLandmarks;
     }
 
     this.canvasCtx.restore();
   }
 
-  onPoseResults(results) {
-    // Ajustar tamanho do canvas apenas uma vez
-    if (this.canvasElement.width !== results.image.width) {
-      this.canvasElement.width = results.image.width;
-      this.canvasElement.height = results.image.height;
-    }
 
-    // DEBUG: Desenhar status do pose
-    this.canvasCtx.save();
-
-    // Espelhar horizontalmente para texto não espelhado
-    this.canvasCtx.scale(-1, 1);
-    this.canvasCtx.translate(-this.canvasElement.width, 0);
-
-    this.canvasCtx.fillStyle = "#4ecca3";
-    this.canvasCtx.font = "16px monospace";
-    this.canvasCtx.fillText(
-      `💪 Pose detectado: ${results.poseLandmarks ? "SIM" : "NÃO"}`,
-      10,
-      60
-    );
-
-    if (results.poseLandmarks) {
-      const currentPoseLandmarks = results.poseLandmarks;
-
-      // DEBUG: Contar landmarks visíveis
-      const visibleCount = currentPoseLandmarks.filter(
-        (p) => p.visibility > 0.3
-      ).length;
-      this.canvasCtx.fillText(`👁️ Pontos visíveis: ${visibleCount}/33`, 10, 90);
-
-      this.canvasCtx.restore(); // Restaurar para desenhar landmarks normalmente
-
-      // Desenhar esqueleto do torso e braços
-      this.drawUpperBody(currentPoseLandmarks);
-
-      // Extrair características do movimento do tronco e braços
-      const features = this.extractUpperBodyFeatures(currentPoseLandmarks);
-
-      if (features) {
-        // Classificar tipo de gesto
-        const gestureType = this.classifyGestureType(features);
-
-        // DEBUG: Log features para debug
-        console.log("📊 Features (Upper Body):", {
-          velocity: features.velocity.toFixed(4),
-          energy: features.energy.toFixed(4),
-          type: gestureType,
-        });
-
-        // Detectar quando há um gesto significativo
-        const currentTime = Date.now();
-
-        // Threshold MUITO reduzido para facilitar geração de criaturas
-        if (
-          features.velocity > 0.002 &&
-          currentTime - this.lastGestureTime > this.gestureDebounceTime
-        ) {
-          const gesture = {
-            type: gestureType,
-            features: features,
-            landmarks: currentPoseLandmarks,
-            timestamp: currentTime,
-            source: "pose", // Indicar que veio do pose
-          };
-
-          console.log("💪 GESTO DETECTADO (Braços)!", gesture.type);
-
-          if (this.onGestureDetected) {
-            this.onGestureDetected(gesture);
-          }
-
-          this.lastGestureTime = currentTime;
-        }
-      }
-
-      // IMPORTANTE: Atualizar previousPoseLandmarks DEPOIS de calcular features
-      this.previousPoseLandmarks = currentPoseLandmarks;
-    } else {
-      // DEBUG: Mostrar por que não detectou
-      this.canvasCtx.scale(-1, 1);
-      this.canvasCtx.translate(-this.canvasElement.width, 0);
-      this.canvasCtx.fillText("⚠️ Pose não detectado", 10, 90);
-      this.canvasCtx.restore();
-    }
-
-    this.canvasCtx.restore();
-
-    // Desenhar também mãos se disponíveis (já desenhadas em onHandsResults)
-    // if (this.previousHandLandmarks) {
-    //     this.drawHands(this.previousHandLandmarks);
-    // }
-  }
-
-  extractUpperBodyFeatures(landmarks) {
-    // Pontos-chave do MediaPipe Pose para tronco e braços:
-    // 11: Ombro esquerdo, 12: Ombro direito
-    // 13: Cotovelo esquerdo, 14: Cotovelo direito
-    // 15: Pulso esquerdo, 16: Pulso direito
-    // 23: Quadril esquerdo, 24: Quadril direito
-
-    const leftShoulder = landmarks[11];
-    const rightShoulder = landmarks[12];
-    const leftElbow = landmarks[13];
-    const rightElbow = landmarks[14];
-    const leftWrist = landmarks[15];
-    const rightWrist = landmarks[16];
-
-    // Verificar se pontos principais estão visíveis (visibility > 0.5)
-    const keyPoints = [
-      leftShoulder,
-      rightShoulder,
-      leftElbow,
-      rightElbow,
-      leftWrist,
-      rightWrist,
-    ];
-    const visiblePoints = keyPoints.filter((p) => p && p.visibility > 0.3);
-
-    if (visiblePoints.length < 4) {
-      // Não temos pontos suficientes
-      return null;
-    }
-
-    const features = {
-      position: { x: 0, y: 0 },
-      velocity: 0,
-      amplitude: 0,
-      direction: { x: 0, y: 0 },
-      armSpread: 0, // Abertura dos braços
-      energy: 0,
-    };
-
-    // Calcular centro do tronco (média dos ombros e pulsos visíveis)
-    let sumX = 0,
-      sumY = 0,
-      count = 0;
-    keyPoints.forEach((point) => {
-      if (point && point.visibility > 0.3) {
-        sumX += point.x;
-        sumY += point.y;
-        count++;
-      }
-    });
-    features.position.x = sumX / count;
-    features.position.y = sumY / count;
-
-    // Calcular velocidade (comparar com frame anterior)
-    if (this.previousPoseLandmarks) {
-      const prevLeftWrist = this.previousPoseLandmarks[15];
-      const prevRightWrist = this.previousPoseLandmarks[16];
-
-      let dx = 0,
-        dy = 0,
-        velocityCount = 0;
-
-      // Velocidade do pulso esquerdo
-      if (leftWrist.visibility > 0.3 && prevLeftWrist.visibility > 0.3) {
-        dx += leftWrist.x - prevLeftWrist.x;
-        dy += leftWrist.y - prevLeftWrist.y;
-        velocityCount++;
-      }
-
-      // Velocidade do pulso direito
-      if (rightWrist.visibility > 0.3 && prevRightWrist.visibility > 0.3) {
-        dx += rightWrist.x - prevRightWrist.x;
-        dy += rightWrist.y - prevRightWrist.y;
-        velocityCount++;
-      }
-
-      if (velocityCount > 0) {
-        dx /= velocityCount;
-        dy /= velocityCount;
-
-        features.velocity = Math.sqrt(dx * dx + dy * dy);
-        features.direction.x = dx;
-        features.direction.y = dy;
-      }
-    }
-
-    // Calcular abertura dos braços (distância entre pulsos)
-    if (leftWrist.visibility > 0.3 && rightWrist.visibility > 0.3) {
-      features.armSpread = Math.sqrt(
-        Math.pow(rightWrist.x - leftWrist.x, 2) +
-          Math.pow(rightWrist.y - leftWrist.y, 2)
-      );
-    }
-
-    // Calcular amplitude (dispersão dos pontos dos braços)
-    let sumDist = 0;
-    keyPoints.forEach((point) => {
-      if (point && point.visibility > 0.3) {
-        const dist = Math.sqrt(
-          Math.pow(point.x - features.position.x, 2) +
-            Math.pow(point.y - features.position.y, 2)
-        );
-        sumDist += dist;
-      }
-    });
-    features.amplitude = sumDist / count;
-
-    // Calcular energia (combinação de velocidade e amplitude)
-    features.energy = features.velocity * features.amplitude * 15;
-
-    return features;
-  }
 
   extractGestureFeatures(landmarks) {
     // Manter método original para compatibilidade (mãos)
@@ -561,23 +320,19 @@ export default class BodyTracker {
   }
 
   classifyGestureType(features) {
-    const { velocity, amplitude, direction, energy } = features;
+    const { velocity, amplitude, direction, energy, openness } = features;
 
-    // Usar armSpread se disponível (pose), senão usar openness (hands)
-    const spread = features.armSpread || features.openness || 0;
-
-    // Classificação baseada em características
-    // Thresholds MUITO reduzidos para facilitar criação de criaturas
+    // Classificação baseada em características das mãos
     if (energy > 0.15) {
       return "explosive"; // Gesto explosivo/rápido
     } else if (energy < 0.02) {
       return "subtle"; // Gesto sutil/lento
     }
 
-    if (spread > 0.3) {
-      return "expansive"; // Braços/mão abertos
-    } else if (spread < 0.15) {
-      return "contracted"; // Braços/mão fechados
+    if (openness > 0.3) {
+      return "expansive"; // Mão aberta
+    } else if (openness < 0.15) {
+      return "contracted"; // Mão fechada
     }
 
     // Analisar direção predominante
@@ -601,86 +356,7 @@ export default class BodyTracker {
     return "neutral";
   }
 
-  drawUpperBody(landmarks) {
-    const ctx = this.canvasCtx;
-    const canvas = this.canvasElement;
 
-    ctx.save();
-
-    // Desenhar apenas tronco e braços
-    ctx.strokeStyle = "#4ecca3";
-    ctx.fillStyle = "#4ecca3";
-    ctx.lineWidth = 4;
-
-    // Conexões do tronco e braços
-    const connections = [
-      [11, 12], // Ombros
-      [11, 13], // Ombro esq -> Cotovelo esq
-      [13, 15], // Cotovelo esq -> Pulso esq
-      [12, 14], // Ombro dir -> Cotovelo dir
-      [14, 16], // Cotovelo dir -> Pulso dir
-      [11, 23], // Ombro esq -> Quadril esq
-      [12, 24], // Ombro dir -> Quadril dir
-      [23, 24], // Quadris
-    ];
-
-    // Desenhar linhas
-    connections.forEach(([start, end]) => {
-      const startPoint = landmarks[start];
-      const endPoint = landmarks[end];
-
-      if (
-        startPoint &&
-        endPoint &&
-        startPoint.visibility > 0.3 &&
-        endPoint.visibility > 0.3
-      ) {
-        ctx.beginPath();
-        ctx.moveTo(startPoint.x * canvas.width, startPoint.y * canvas.height);
-        ctx.lineTo(endPoint.x * canvas.width, endPoint.y * canvas.height);
-        ctx.stroke();
-      }
-    });
-
-    // Desenhar pontos principais (ombros, cotovelos, pulsos)
-    const keyPoints = [11, 12, 13, 14, 15, 16];
-    const pointNames = {
-      11: "OE",
-      12: "OD",
-      13: "CE",
-      14: "CD",
-      15: "PE",
-      16: "PD",
-    };
-
-    keyPoints.forEach((idx) => {
-      const point = landmarks[idx];
-      if (point && point.visibility > 0.3) {
-        // Desenhar ponto maior
-        ctx.beginPath();
-        ctx.arc(
-          point.x * canvas.width,
-          point.y * canvas.height,
-          10,
-          0,
-          2 * Math.PI
-        );
-        ctx.fill();
-
-        // DEBUG: Desenhar label do ponto
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 12px monospace";
-        ctx.fillText(
-          pointNames[idx],
-          point.x * canvas.width + 12,
-          point.y * canvas.height + 5
-        );
-        ctx.fillStyle = "#4ecca3";
-      }
-    });
-
-    ctx.restore();
-  }
 
   drawHands(landmarks) {
     const ctx = this.canvasCtx;
@@ -766,8 +442,8 @@ export default class BodyTracker {
   }
 
   getLastLandmarks() {
-    // Retornar landmarks do pose (prioridade) ou hands
-    return this.previousPoseLandmarks || this.previousHandLandmarks;
+    // Retornar landmarks das mãos
+    return this.previousHandLandmarks;
   }
 
   stop() {

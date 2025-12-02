@@ -579,7 +579,7 @@ class EcoGestoSystem {
       // Atualizar árvore genealógica
       this.visualFeedback.drawGenealogy(this.genealogy, this.creatures);
 
-      // Desenhar pose corporal
+      // Desenhar mãos detectadas
       const landmarks = this.bodyTracker.getLastLandmarks();
       if (landmarks) {
         this.visualFeedback.drawPose(landmarks);
