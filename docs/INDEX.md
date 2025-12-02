@@ -110,6 +110,21 @@ Bem-vindo ao **Eco-Gesto**, um sistema de composição corporal com criaturas so
 
 ---
 
+### 5.5️⃣ [CREATURE_SOUND_MIXING_TECHNICAL.md](CREATURE_SOUND_MIXING_TECHNICAL.md) 🆕
+**Guia Técnico: Como Criaturas Mixam e Criam Sons**
+
+- 🎵 Pipeline de criação sonora
+- 🧬 Estrutura do DNA sonoro (genoma)
+- 🔊 Cadeia de síntese Web Audio API
+- 🧬 Algoritmo de crossover genético
+- 🔀 Funções de mutação e blend
+- 🎛️ Integração com Music.AI
+- 💻 Exemplos de código
+
+**Ideal para**: Desenvolvedores que querem entender profundamente a mixagem sonora
+
+---
+
 ### 6️⃣ [TESTING.md](TESTING.md)
 **Guia de Testes e Validação**
 

@@ -186,6 +186,7 @@ Eco-Gesto/
 
 - **[TECHNICAL.md](docs/TECHNICAL.md)** - Detalhes técnicos
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Arquitetura do sistema
+- **[CREATURE_SOUND_MIXING_TECHNICAL.md](docs/CREATURE_SOUND_MIXING_TECHNICAL.md)** - 🆕 **Como criaturas mixam e criam sons**
 - **[TESTING.md](docs/TESTING.md)** - Como testar
 
 ### Troubleshooting
