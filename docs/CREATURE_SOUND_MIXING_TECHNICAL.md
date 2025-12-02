@@ -149,7 +149,7 @@ creature = {
 
 ### Musical Scale System
 
-Creatures use a configurable musical scale for frequency selection:
+Creatures use a configurable musical scale for frequency selection. Each scale is defined as an array of **semitones from the root note** (C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11):
 
 ```javascript
 const scales = {
@@ -160,12 +160,14 @@ const scales = {
   blues: [0, 3, 5, 6, 7, 10]          // Blues scale
 };
 
-// Calculate frequency from position
+// Calculate frequency from position using current scale
 getScaledFrequency(baseNote, features) {
+  const scale = this.currentScale;  // Reference to active scale array
   const octave = Math.floor(features.position.y * 3);  // 0-2 octaves
   const noteIndex = Math.floor(features.position.x * scale.length);
   const semitone = scale[noteIndex % scale.length];
   
+  // Formula: frequency = baseNote × 2^(semitones/12)
   return baseNote * Math.pow(2, (semitone + octave * 12) / 12);
 }
 ```
@@ -397,7 +399,7 @@ crossover(parent1, parent2, currentGesture, mutationRate) {
   if (currentGesture?.features) {
     offspringDNA.frequency = this.blend(
       offspringDNA.frequency,
-      mapRange(gesture.features.position.y, 0, 1, 800, 200),
+      mapRange(currentGesture.features.position.y, 0, 1, 800, 200),
       gestureInfluence
     );
     // ... apply to other parameters
@@ -434,7 +436,8 @@ mutate(value, mutationRate) {
   const mutationAmount = value * (Math.random() * 0.4 - 0.2);
   const mutated = value + mutationAmount;
   
-  // Ensure non-negative for parameters that require it
+  // Prevent extreme values: set minimum at 10% of original
+  // This avoids zero/negative values while preserving genetic stability
   return Math.max(value * 0.1, mutated);
 }
 ```
