@@ -10,14 +10,65 @@
     <div class="container">
       <header>
         <h1>🌱 Eco-Gesto</h1>
-        <p>Ecossistema de Criaturas Sonoras Evolutivas</p>
+        <p>Ecossistema de Criaturas Sonoras Evolutivas - Controlado por Mãos</p>
       </header>
+
+      <!-- Instruções -->
+      <div class="instructions">
+        <h3>📖 Como usar:</h3>
+        <div class="instructions-grid">
+          <div class="instruction-category">
+            <h4>🎯 Controles Básicos</h4>
+            <ul>
+              <li>
+                <span class="gesture-icon">⚡</span>
+                <strong>Velocidade do gesto:</strong> Movimentos rápidos criam sons agudos, lentos criam sons graves
+              </li>
+              <li>
+                <span class="gesture-icon">👐</span>
+                <strong>Abertura da mão:</strong> Mão aberta = sons expansivos | Mão fechada = sons compactos
+              </li>
+              <li>
+                <span class="gesture-icon">↔️</span>
+                <strong>Posição horizontal:</strong> Esquerda/direita define a nota musical
+              </li>
+              <li>
+                <span class="gesture-icon">↕️</span>
+                <strong>Posição vertical:</strong> Mão alta = volume alto | Mão baixa = volume baixo
+              </li>
+            </ul>
+          </div>
+
+          <div class="instruction-category">
+            <h4>🧬 Sistema Evolutivo</h4>
+            <ul>
+              <li>
+                <span class="gesture-icon">🌱</span>
+                <strong>Novo gesto:</strong> Cria uma criatura sonora única
+              </li>
+              <li>
+                <span class="gesture-icon">🔄</span>
+                <strong>Gestos consecutivos:</strong> Cruzam criaturas existentes gerando híbridos
+              </li>
+              <li>
+                <span class="gesture-icon">🎵</span>
+                <strong>Criaturas ativas:</strong> Cada uma toca continuamente até o limite ser atingido
+              </li>
+              <li>
+                <span class="gesture-icon">🎨</span>
+                <strong>Evolução:</strong> Híbridos herdam características dos "pais"
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <div class="main-content">
         <!-- Área de vídeo e detecção -->
         <div class="video-section">
           <video id="videoInput" autoplay playsinline></video>
           <canvas id="poseCanvas"></canvas>
+          <div class="detection-hint">👋 Mostre suas mãos para a câmera</div>
         </div>
 
         <!-- Visualização do ecossistema -->
@@ -106,39 +157,11 @@
         <h3>Árvore Genealógica</h3>
         <canvas id="genealogyCanvas"></canvas>
       </div>
-
-      <!-- Instruções -->
-      <div class="instructions">
-        <h3>Como usar:</h3>
-        <ul>
-          <li>
-            🖐️ <strong>Gesto rápido:</strong> Cria criatura com sons agudos e
-            rápidos
-          </li>
-          <li>
-            ✋ <strong>Gesto lento:</strong> Cria criatura com sons graves e
-            lentos
-          </li>
-          <li>
-            🔄 <strong>Gesto circular:</strong> Modula o timbre da criatura
-          </li>
-          <li>↕️ <strong>Movimentos verticais:</strong> Controla o pitch</li>
-          <li>
-            ↔️ <strong>Movimentos horizontais:</strong> Controla o pan
-            (esquerda/direita)
-          </li>
-          <li>
-            🧬 <strong>Gestos consecutivos:</strong> Cruzam criaturas existentes
-            gerando híbridos
-          </li>
-        </ul>
-      </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
     <script type="module" src="js/main.js"></script>
   </body>
 </html>

@@ -1,8 +1,8 @@
-# 🌱 Eco-Gesto
+## 🌱 Eco-Gesto
 
-## Ecossistema de Criaturas Sonoras Evolutivas
+## Ecossistema de Criaturas Sonoras Evolutivas - Controlado por Mãos
 
-Um sistema interativo de composição corporal onde **gestos do performer geram e evoluem texturas sonoras vivas** em tempo real. Cada movimento não produz apenas um som, mas cria uma **criatura sonora autônoma** que evolui, muta e pode cruzar com outras criaturas, formando um ecossistema generativo.
+Um sistema interativo de composição gestual onde **movimentos das mãos geram e evoluem texturas sonoras vivas** em tempo real. Cada gesto não produz apenas um som, mas cria uma **criatura sonora autônoma** que evolui, muta e pode cruzar com outras criaturas, formando um ecossistema generativo.
 
 ---
 
@@ -27,11 +27,11 @@ Gesto → Criatura Sonora → Ecossistema → Evolução → Paisagem Sonora
 
 ## ✨ Características
 
-### 🎭 Interação Corporal
+### 🎭 Interação Gestual
 
 - Detecção via **webcam** (sem hardware especial)
-- **MediaPipe Hands** + **MediaPipe Pose** para captura
-- Reconhece: mãos, braços, torso
+- **MediaPipe Hands** para captura de gestos
+- Reconhece: movimentos das mãos, abertura/fechamento, direção
 - Classifica gestos: explosivo, sutil, expansivo, contraído, direcional
 
 ### 🎵 Síntese Sonora Evolutiva
@@ -105,11 +105,12 @@ http://localhost:8000
    - Toggle "Ativar Mixagem Profissional" ✅
    - Ajuste a influência (0-100%)
    - Veja o histórico de mixagens 📜
-4. **Faça gestos!**
-   - Movimentos amplos e rápidos → sons explosivos
-   - Movimentos suaves e lentos → sons sutis
-   - Braços abertos → sons expansivos
-   - Mãos agitadas → criaturas energéticas
+2. **Faça gestos com as mãos!**
+   - Movimentos rápidos → sons explosivos
+   - Movimentos lentos → sons sutis
+   - Mão aberta → sons expansivos
+   - Mão fechada → sons compactos
+   - Movimentos verticais/horizontais → controle de pitch e pan
 
 ### Controles
 
@@ -139,7 +140,7 @@ Eco-Gesto/
 ├── js/
 │   ├── main.js                    # Orquestrador do sistema
 │   └── modules/
-│       ├── BodyTracker.js         # Detecção gestual (MediaPipe)
+│       ├── BodyTracker.js         # Detecção de mãos (MediaPipe Hands)
 │       ├── SoundEngine.js         # Síntese sonora (Web Audio)
 │       ├── EvolutionEngine.js     # Algoritmos evolutivos
 │       └── VisualFeedback.js      # Visualização
@@ -242,12 +243,12 @@ Debug completo com console interativo
 - Cruzamento (recombinação genética)
 - Seleção natural (limite populacional)
 
-### 3. **Motion Capture**
+### 3. **Detecção de Gestos**
 
-- MediaPipe Pose (33 landmarks corporais)
-- MediaPipe Hands (21 landmarks por mão)
-- Extração de features: velocidade, amplitude, direção, energia
+- MediaPipe Hands (21 landmarks por mão, até 2 mãos)
+- Extração de features: velocidade, amplitude, direção, energia, abertura
 - Classificação gestual automática
+- Sistema simplificado e responsivo
 
 ### 4. **Sistemas Complexos**
 
@@ -269,7 +270,6 @@ Debug completo com console interativo
 ### Libraries
 
 - **MediaPipe Hands** v0.4 - Detecção de mãos
-- **MediaPipe Pose** v0.5 - Detecção corporal
 - **MediaPipe Camera Utils** - Gerenciamento de câmera
 
 ### Navegadores Suportados
@@ -294,7 +294,7 @@ Debug completo com console interativo
 - Chrome/Firefox
 - Webcam 720p
 - Iluminação adequada
-- Distância: 1-2 metros da câmera
+- Distância: 0.5-1.5 metros da câmera (mãos visíveis)
 
 ---
 

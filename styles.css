@@ -72,6 +72,26 @@ header p {
   transform: scaleX(-1); /* Espelhar junto com o vídeo */
 }
 
+.detection-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(78, 204, 163, 0.9);
+  color: #1a1a2e;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1.1em;
+  box-shadow: 0 4px 15px rgba(78, 204, 163, 0.4);
+  animation: fadeInOut 3s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 #ecosystemCanvas {
   width: 100%;
   height: 400px;
@@ -213,13 +233,38 @@ button {
 
 .instructions {
   background: rgba(0, 0, 0, 0.3);
-  padding: 20px;
+  padding: 25px;
   border-radius: 15px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(78, 204, 163, 0.3);
 }
 
 .instructions h3 {
   color: #4ecca3;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  text-align: center;
+}
+
+.instructions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.instruction-category {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(78, 204, 163, 0.2);
+}
+
+.instruction-category h4 {
+  color: #ffe66d;
+  margin-bottom: 12px;
+  font-size: 1.1em;
+  border-bottom: 2px solid rgba(255, 230, 109, 0.3);
+  padding-bottom: 8px;
 }
 
 .instructions ul {
@@ -233,10 +278,32 @@ button {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   border-left: 3px solid #4ecca3;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.instructions li:hover {
+  background: rgba(78, 204, 163, 0.1);
+  transform: translateX(5px);
+}
+
+.gesture-icon,
+.instrument-icon {
+  font-size: 1.3em;
+  min-width: 30px;
+  text-align: center;
 }
 
 .instructions strong {
   color: #4ecca3;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.instructions li > span:last-child {
+  flex: 1;
 }
 
 /* Responsividade */
@@ -251,6 +318,18 @@ button {
 
   .slider-control input[type="range"] {
     width: 100%;
+  }
+
+  .instructions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instructions h3 {
+    font-size: 1.2em;
+  }
+
+  .instruction-category h4 {
+    font-size: 1em;
   }
 }
 
