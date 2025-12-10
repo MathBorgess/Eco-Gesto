@@ -59,8 +59,8 @@ export default class SoundEngine {
     createCreatureFromGesture(gesture) {
         const { features, type, timestamp, source } = gesture;
         
-        // Valores padrão para features que podem não existir
-        const openness = features.openness || features.armSpread || 0.3;
+        // Valores padrão para features (todas vêm das mãos agora)
+        const openness = features.openness || 0.3;
         const amplitude = features.amplitude || 0.2;
         const velocity = Math.max(0.001, features.velocity || 0.01);
         const energy = Math.max(0.01, features.energy || 0.1);
@@ -89,6 +89,12 @@ export default class SoundEngine {
             default:
                 soundProfile = this.createSynthPadSound(features);
         }
+        
+        // Calcular volume baseado na altura da mão (Y invertido: topo=0, baixo=1)
+        // Mão no topo (y=0) = volume alto (0.6), mão embaixo (y=1) = volume baixo (0.01)
+        const calculatedVolume = this.mapRange(features.position.y, 0, 1, 0.6, 0.01);
+        
+        console.log(`🔊 Volume calculado: Y=${features.position.y.toFixed(2)} → Vol=${calculatedVolume.toFixed(2)}`);
         
         const dna = {
             ...soundProfile,

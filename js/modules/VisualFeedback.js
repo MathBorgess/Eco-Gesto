@@ -7,8 +7,8 @@
 
 export default class VisualFeedback {
   constructor() {
-    this.poseCanvas = null;
-    this.poseCtx = null;
+    this.handsCanvas = null;
+    this.handsCtx = null;
     this.ecosystemCanvas = null;
     this.ecosystemCtx = null;
     this.genealogyCanvas = null;
@@ -38,9 +38,9 @@ export default class VisualFeedback {
   init() {
     console.log("🎨 Inicializando VisualFeedback...");
 
-    // Canvas de pose
-    this.poseCanvas = document.getElementById("poseCanvas");
-    this.poseCtx = this.poseCanvas.getContext("2d");
+    // Canvas de mãos (reutilizando o ID poseCanvas por compatibilidade)
+    this.handsCanvas = document.getElementById("poseCanvas");
+    this.handsCtx = this.handsCanvas.getContext("2d");
 
     // Canvas de ecossistema
     this.ecosystemCanvas = document.getElementById("ecosystemCanvas");
@@ -73,13 +73,13 @@ export default class VisualFeedback {
   }
 
   /**
-   * Desenha pose corporal detectada
+   * Desenha mãos detectadas
    */
   drawPose(landmarks) {
-    if (!landmarks || !this.poseCtx) return;
+    if (!landmarks || !this.handsCtx) return;
 
-    const ctx = this.poseCtx;
-    const canvas = this.poseCanvas;
+    const ctx = this.handsCtx;
+    const canvas = this.handsCanvas;
 
     // Limpar canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -526,12 +526,12 @@ export default class VisualFeedback {
    * Limpa todas as visualizações
    */
   clear() {
-    if (this.poseCtx) {
-      this.poseCtx.clearRect(
+    if (this.handsCtx) {
+      this.handsCtx.clearRect(
         0,
         0,
-        this.poseCanvas.width,
-        this.poseCanvas.height
+        this.handsCanvas.width,
+        this.handsCanvas.height
       );
     }
 
