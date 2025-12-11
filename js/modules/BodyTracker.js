@@ -20,7 +20,7 @@ export default class BodyTracker {
     this.gestureStartTime = null;
     this.movementHistory = [];
     this.lastGestureType = null;
-    this.gestureDebounceTime = 300; // ms entre detecções (reduzido para maior responsividade)
+    this.gestureDebounceTime = 290; // ms entre detecções (reduzido para maior responsividade)
     this.lastGestureTime = 0;
 
     // Buffer para suavização temporal (média móvel)
@@ -208,8 +208,7 @@ export default class BodyTracker {
     this.canvasCtx.fillStyle = "#ffe66d";
     this.canvasCtx.font = "16px monospace";
     this.canvasCtx.fillText(
-      `👋 Mãos detectadas: ${
-        results.multiHandLandmarks ? results.multiHandLandmarks.length : 0
+      `👋 Mãos detectadas: ${results.multiHandLandmarks ? results.multiHandLandmarks.length : 0
       }`,
       10,
       30
@@ -232,7 +231,7 @@ export default class BodyTracker {
       if (features) {
         const gestureType = this.classifyGestureType(features);
         const currentTime = Date.now();
-        
+
         console.log(`📍 Posição: X=${features.position.x.toFixed(2)}, Y=${features.position.y.toFixed(2)}`);
 
         // Detectar gestos significativos
@@ -321,7 +320,7 @@ export default class BodyTracker {
     landmarks.forEach((point) => {
       const dist = Math.sqrt(
         Math.pow(point.x - rawFeatures.position.x, 2) +
-          Math.pow(point.y - rawFeatures.position.y, 2)
+        Math.pow(point.y - rawFeatures.position.y, 2)
       );
       sumDist += dist;
     });
