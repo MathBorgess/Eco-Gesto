@@ -20,8 +20,19 @@ export default class BodyTracker {
     this.gestureStartTime = null;
     this.movementHistory = [];
     this.lastGestureType = null;
-    this.gestureDebounceTime = 500; // ms entre detecções
+    this.gestureDebounceTime = 300; // ms entre detecções (reduzido para maior responsividade)
     this.lastGestureTime = 0;
+
+    // Buffer para suavização temporal (média móvel)
+    this.featureHistorySize = 6; // Quantidade de frames para média
+    this.featureHistory = {
+      velocity: [],
+      amplitude: [],
+      openness: [],
+      energy: [],
+      positionX: [],
+      positionY: []
+    };
   }
 
   async init() {
@@ -255,9 +266,19 @@ export default class BodyTracker {
 
 
 
+  // Método auxiliar para calcular média móvel
+  smoothValue(history, newValue, key) {
+    history.push(newValue);
+    if (history.length > this.featureHistorySize) {
+      history.shift();
+    }
+    // Retorna média dos valores no buffer
+    return history.reduce((sum, val) => sum + val, 0) / history.length;
+  }
+
   extractGestureFeatures(landmarks) {
-    // Manter método original para compatibilidade (mãos)
-    const features = {
+    // Calcular valores brutos primeiro
+    const rawFeatures = {
       position: { x: 0, y: 0 },
       velocity: 0,
       amplitude: 0,
@@ -273,8 +294,8 @@ export default class BodyTracker {
       sumX += point.x;
       sumY += point.y;
     });
-    features.position.x = sumX / landmarks.length;
-    features.position.y = sumY / landmarks.length;
+    rawFeatures.position.x = sumX / landmarks.length;
+    rawFeatures.position.y = sumY / landmarks.length;
 
     // Calcular velocidade
     if (this.previousHandLandmarks) {
@@ -287,36 +308,49 @@ export default class BodyTracker {
       const prevX = prevSumX / this.previousHandLandmarks.length;
       const prevY = prevSumY / this.previousHandLandmarks.length;
 
-      const dx = features.position.x - prevX;
-      const dy = features.position.y - prevY;
+      const dx = rawFeatures.position.x - prevX;
+      const dy = rawFeatures.position.y - prevY;
 
-      features.velocity = Math.sqrt(dx * dx + dy * dy);
-      features.direction.x = dx;
-      features.direction.y = dy;
+      rawFeatures.velocity = Math.sqrt(dx * dx + dy * dy);
+      rawFeatures.direction.x = dx;
+      rawFeatures.direction.y = dy;
     }
 
     // Calcular amplitude
     let sumDist = 0;
     landmarks.forEach((point) => {
       const dist = Math.sqrt(
-        Math.pow(point.x - features.position.x, 2) +
-          Math.pow(point.y - features.position.y, 2)
+        Math.pow(point.x - rawFeatures.position.x, 2) +
+          Math.pow(point.y - rawFeatures.position.y, 2)
       );
       sumDist += dist;
     });
-    features.amplitude = sumDist / landmarks.length;
+    rawFeatures.amplitude = sumDist / landmarks.length;
 
     // Calcular openness
     const thumb = landmarks[4];
     const pinky = landmarks[20];
-    features.openness = Math.sqrt(
+    rawFeatures.openness = Math.sqrt(
       Math.pow(thumb.x - pinky.x, 2) + Math.pow(thumb.y - pinky.y, 2)
     );
 
     // Calcular energia
-    features.energy = features.velocity * features.amplitude * 10;
+    rawFeatures.energy = rawFeatures.velocity * rawFeatures.amplitude * 10;
 
-    return features;
+    // Aplicar suavização temporal (média móvel) para features críticas
+    const smoothedFeatures = {
+      position: {
+        x: this.smoothValue(this.featureHistory.positionX, rawFeatures.position.x, 'positionX'),
+        y: this.smoothValue(this.featureHistory.positionY, rawFeatures.position.y, 'positionY')
+      },
+      velocity: this.smoothValue(this.featureHistory.velocity, rawFeatures.velocity, 'velocity'),
+      amplitude: this.smoothValue(this.featureHistory.amplitude, rawFeatures.amplitude, 'amplitude'),
+      direction: rawFeatures.direction, // Direção mantida instantânea para responsividade
+      openness: this.smoothValue(this.featureHistory.openness, rawFeatures.openness, 'openness'),
+      energy: this.smoothValue(this.featureHistory.energy, rawFeatures.energy, 'energy'),
+    };
+
+    return smoothedFeatures;
   }
 
   classifyGestureType(features) {
