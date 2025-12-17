@@ -121,49 +121,6 @@
             value="5"
           />
         </div>
-
-        <!-- 🆕 Music.AI Controls -->
-        <div class="musicai-controls">
-          <h3>🎼 Music.AI Integration</h3>
-          
-          <div class="toggle-control">
-            <label for="musicAIToggle">
-              <input type="checkbox" id="musicAIToggle" />
-              Ativar Mixagem Profissional
-            </label>
-            <span id="musicAIStatus" class="status-idle">Desativado</span>
-          </div>
-
-          <div class="slider-control">
-            <label for="musicAIInfluence">
-              Influência: <span id="influenceValue">50%</span>
-            </label>
-            <input
-              type="range"
-              id="musicAIInfluence"
-              min="0"
-              max="1"
-              step="0.1"
-              value="0.5"
-            />
-            <small>0% = só gene original | 100% = só mixagem</small>
-          </div>
-
-          <div class="musicai-actions">
-            <button id="showHistoryBtn" class="btn-secondary">
-              📜 Histórico (<span id="historyCount">0</span>)
-            </button>
-            <button id="showMetricsBtn" class="btn-secondary">
-              📊 Métricas
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Árvore genealógica -->
-      <div class="genealogy-section">
-        <h3>Árvore Genealógica</h3>
-        <canvas id="genealogyCanvas"></canvas>
       </div>
     </div>
 

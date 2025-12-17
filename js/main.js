@@ -68,45 +68,6 @@ class EcoGestoSystem {
         this.config.maxCreatures;
       this.maintainCreatureLimit();
     });
-
-    // === Music.AI Controls ===
-    
-    // Toggle Music.AI
-    const musicAIToggle = document.getElementById('musicAIToggle');
-    if (musicAIToggle) {
-      musicAIToggle.addEventListener('change', async e => {
-        this.config.musicAI.enabled = e.target.checked;
-        await this.toggleMusicAI(e.target.checked);
-      });
-    }
-
-    // Slider de influência
-    const influenceSlider = document.getElementById('musicAIInfluence');
-    if (influenceSlider) {
-      influenceSlider.addEventListener('input', e => {
-        this.config.musicAI.influence = parseFloat(e.target.value);
-        const valueEl = document.getElementById('influenceValue');
-        if (valueEl) {
-          valueEl.textContent = (this.config.musicAI.influence * 100).toFixed(0) + '%';
-        }
-      });
-    }
-
-    // Botão de histórico
-    const historyBtn = document.getElementById('showHistoryBtn');
-    if (historyBtn) {
-      historyBtn.addEventListener('click', () => {
-        this.showMixHistory();
-      });
-    }
-
-    // Botão de métricas
-    const metricsBtn = document.getElementById('showMetricsBtn');
-    if (metricsBtn) {
-      metricsBtn.addEventListener('click', () => {
-        this.showMetrics();
-      });
-    }
   }
 
   async toggleSystem() {
@@ -132,11 +93,6 @@ class EcoGestoSystem {
 
         this.isRunning = true;
         console.log('✅ isRunning setado para TRUE');
-
-        // Inicializar Music.AI se estiver habilitado
-        if (this.config.musicAI.enabled && !this.mixManager) {
-          await this.initMusicAI();
-        }
 
         console.log('🎬 Iniciando loop de visualização...');
         this.startVisualizationLoop();

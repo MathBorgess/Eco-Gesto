@@ -48,12 +48,6 @@ export default class VisualFeedback {
     this.ecosystemCanvas.width = this.ecosystemCanvas.offsetWidth;
     this.ecosystemCanvas.height = this.ecosystemCanvas.offsetHeight;
 
-    // Canvas de genealogia
-    this.genealogyCanvas = document.getElementById("genealogyCanvas");
-    this.genealogyCtx = this.genealogyCanvas.getContext("2d");
-    this.genealogyCanvas.width = this.genealogyCanvas.offsetWidth;
-    this.genealogyCanvas.height = this.genealogyCanvas.offsetHeight;
-
     // Listener para redimensionamento
     window.addEventListener('resize', () => this.resizeCanvases());
 
@@ -417,109 +411,7 @@ export default class VisualFeedback {
    * Desenha árvore genealógica das criaturas
    */
   drawGenealogy(genealogy, creatures) {
-    if (!this.genealogyCtx) return;
-
-    const ctx = this.genealogyCtx;
-    const canvas = this.genealogyCanvas;
-
-    // Limpar
-    ctx.fillStyle = "rgba(10, 10, 10, 0.9)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    if (genealogy.length === 0) {
-      ctx.fillStyle = "#666";
-      ctx.font = "14px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(
-        "Nenhum cruzamento ainda...",
-        canvas.width / 2,
-        canvas.height / 2
-      );
-      return;
-    }
-
-    // Criar mapa de criaturas por ID
-    const creatureMap = new Map();
-    creatures.forEach((c) => creatureMap.set(c.id, c));
-
-    // Organizar em níveis de geração
-    const generations = new Map();
-
-    creatures.forEach((creature) => {
-      if (!generations.has(creature.generation)) {
-        generations.set(creature.generation, []);
-      }
-      generations.get(creature.generation).push(creature);
-    });
-
-    // Desenhar por geração
-    const maxGen = Math.max(...Array.from(generations.keys()));
-    const levelHeight = canvas.height / (maxGen + 2);
-
-    generations.forEach((creaturesInGen, gen) => {
-      const y = levelHeight * (gen + 1);
-      const spacing = canvas.width / (creaturesInGen.length + 1);
-
-      creaturesInGen.forEach((creature, index) => {
-        const x = spacing * (index + 1);
-
-        // Usar cor gerada ou fallback
-        const color = creature.dna.color || this.colors[creature.type] || this.colors.neutral;
-        const radius = 18;
-
-        // Glow
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = color;
-
-        // Círculo da criatura
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // Borda
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = this.lightenColor(color, 40);
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Nome
-        ctx.fillStyle = "#fff";
-        ctx.font = "10px monospace";
-        ctx.textAlign = "center";
-        ctx.shadowBlur = 3;
-        ctx.shadowColor = '#000';
-        const shortName = creature.name.split("-")[0];
-        ctx.fillText(shortName, x, y + radius + 18);
-
-        // Desenhar linhas para pais (se híbrido)
-        if (creature.parents && creature.parents.length === 2) {
-          const prevGen = gen - 1;
-          if (generations.has(prevGen)) {
-            const prevCreatures = generations.get(prevGen);
-
-            creature.parents.forEach((parentId) => {
-              const parentIndex = prevCreatures.findIndex(
-                (c) => c.id === parentId
-              );
-              if (parentIndex !== -1) {
-                const parentX = spacing * (parentIndex + 1);
-                const parentY = levelHeight * (prevGen + 1);
-
-                // Linha conectando filho aos pais
-                ctx.shadowBlur = 0;
-                ctx.strokeStyle = "rgba(78, 204, 163, 0.4)";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(parentX, parentY + radius);
-                ctx.lineTo(x, y - radius);
-                ctx.stroke();
-              }
-            });
-          }
-        }
-      });
-    });
+    // Removido da UI
   }
 
   /**
@@ -542,16 +434,6 @@ export default class VisualFeedback {
         0,
         this.ecosystemCanvas.width,
         this.ecosystemCanvas.height
-      );
-    }
-
-    if (this.genealogyCtx) {
-      this.genealogyCtx.fillStyle = "rgba(10, 10, 10, 1)";
-      this.genealogyCtx.fillRect(
-        0,
-        0,
-        this.genealogyCanvas.width,
-        this.genealogyCanvas.height
       );
     }
   }
