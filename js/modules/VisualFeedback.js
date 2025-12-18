@@ -314,14 +314,15 @@ export default class VisualFeedback {
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 13px monospace';
     ctx.textAlign = 'center';
+    console.log("Creature instrument type: ", creature.instrumentType);
     const instrumentName = creature.instrumentType ? 
       creature.instrumentType.toUpperCase() : 
-      creature.name.split('-')[1] || 'SOUND';
+      'SYNTH';
     ctx.fillText(instrumentName, x, y - radius - 15);
 
     // ID e Geração
     ctx.font = '11px monospace';
-    ctx.fillStyle = this.lightenColor(color, 60);
+    // ctx.fillStyle = this.lightenColor(color, 60);
     const displayId = creature.id.split('_')[1] || creature.id.slice(-4);
     ctx.fillText(`#${displayId} • Gen ${creature.generation}`, x, y - radius - 2);
 

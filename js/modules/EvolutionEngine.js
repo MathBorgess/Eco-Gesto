@@ -117,7 +117,10 @@ export default class EvolutionEngine {
       type: "hybrid",
       dna: offspringDNA,
       birthTime: Date.now(),
-      generation: Math.max(parent1.generation, parent2.generation) + 1,
+      generation: Math.max(
+      parent1.generation || 0, 
+      parent2.generation || 0
+  ) + 1,
       parents: [parent1.id, parent2.id],
       gestureOrigin: currentGesture ? currentGesture.features : null,
     };

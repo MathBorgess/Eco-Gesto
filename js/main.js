@@ -20,7 +20,7 @@ class EcoGestoSystem {
     this.config = {
       maxCreatures: 5,
       mutationRate: 0.1,
-      crossoverThreshold: 0.3, // Probabilidade de cruzamento vs nova criatura
+      crossoverThreshold: 0.5, // Probabilidade de cruzamento vs nova criatura
       gestureTimeout: 2000, // Tempo para considerar gesto como "novo" ou "cruzamento"
       musicAI: {
         enabled: false, // Desabilitado por padrão até configurar API key
