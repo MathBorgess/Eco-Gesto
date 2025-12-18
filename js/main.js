@@ -97,6 +97,12 @@ class EcoGestoSystem {
         console.log('🎬 Iniciando loop de visualização...');
         this.startVisualizationLoop();
 
+        // Mostrar hint de detecção
+        const detectionHint = document.getElementById('detectionHint');
+        if (detectionHint) {
+          detectionHint.classList.remove('hidden');
+        }
+
         startBtn.innerHTML = '<span class="icon">⏹</span> Parar Sistema';
         startBtn.classList.add('active');
 
@@ -110,6 +116,13 @@ class EcoGestoSystem {
       this.bodyTracker.stop();
       this.clearEcosystem();
       this.isRunning = false;
+      
+      // Ocultar hint de detecção
+      const detectionHint = document.getElementById('detectionHint');
+      if (detectionHint) {
+        detectionHint.classList.add('hidden');
+      }
+      
       startBtn.innerHTML = '<span class="icon">▶</span> Iniciar Sistema';
       startBtn.classList.remove('active');
 
