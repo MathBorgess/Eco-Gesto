@@ -17,54 +17,49 @@
   <body>
     <div class="container">
       <header>
-        <h1>🌱 Eco-Gesto</h1>
-        <p>Ecossistema de Criaturas Sonoras Evolutivas - Controlado por Mãos</p>
+        <div class="logo">
+          <span class="logo-icon">🌿</span>
+          <h1>Eco-Gesto</h1>
+        </div>
+        <p>Ecossistema de Criaturas Sonoras Evolutivas</p>
       </header>
 
       <!-- Instruções -->
       <div class="instructions">
-        <h3>📖 Como usar:</h3>
+        <h3>Como Usar</h3>
         <div class="instructions-grid">
           <div class="instruction-category">
-            <h4>🎯 Controles Básicos</h4>
+            <h4>Controles Básicos</h4>
             <ul>
               <li>
-                <span class="gesture-icon">⚡</span>
-                <strong>Velocidade do gesto:</strong> Movimentos rápidos criam sons agudos, lentos criam sons graves
+                <strong>Velocidade:</strong> Movimentos rápidos criam sons agudos, lentos criam graves
               </li>
               <li>
-                <span class="gesture-icon">👐</span>
-                <strong>Abertura da mão:</strong> Mão aberta = sons expansivos | Mão fechada = sons compactos
+                <strong>Abertura da mão:</strong> Aberta = sons expansivos | Fechada = compactos
               </li>
               <li>
-                <span class="gesture-icon">↔️</span>
-                <strong>Posição horizontal:</strong> Esquerda/direita define a nota musical
+                <strong>Posição horizontal:</strong> Esquerda/direita define a nota
               </li>
               <li>
-                <span class="gesture-icon">↕️</span>
-                <strong>Posição vertical:</strong> Mão alta = volume alto | Mão baixa = volume baixo
+                <strong>Posição vertical:</strong> Altura controla o volume
               </li>
             </ul>
           </div>
 
           <div class="instruction-category">
-            <h4>🧬 Sistema Evolutivo</h4>
+            <h4>Sistema Evolutivo</h4>
             <ul>
               <li>
-                <span class="gesture-icon">🌱</span>
                 <strong>Novo gesto:</strong> Cria uma criatura sonora única
               </li>
               <li>
-                <span class="gesture-icon">🔄</span>
-                <strong>Gestos consecutivos:</strong> Cruzam criaturas existentes gerando híbridos
+                <strong>Gestos consecutivos:</strong> Cruzam criaturas gerando híbridos
               </li>
               <li>
-                <span class="gesture-icon">🎵</span>
-                <strong>Criaturas ativas:</strong> Cada uma toca continuamente até o limite ser atingido
+                <strong>Criaturas ativas:</strong> Tocam continuamente até atingir limite
               </li>
               <li>
-                <span class="gesture-icon">🎨</span>
-                <strong>Evolução:</strong> Híbridos herdam características dos "pais"
+                <strong>Evolução:</strong> Híbridos herdam características dos pais
               </li>
             </ul>
           </div>
@@ -73,10 +68,46 @@
 
       <div class="main-content">
         <!-- Área de vídeo e detecção -->
-        <div class="video-section">
-          <video id="videoInput" autoplay playsinline></video>
-          <canvas id="poseCanvas"></canvas>
-          <div class="detection-hint">👋 Mostre suas mãos para a câmera</div>
+        <div class="video-column">
+          <div class="video-section">
+            <video id="videoInput" autoplay playsinline></video>
+            <canvas id="poseCanvas"></canvas>
+            <div class="detection-hint hidden" id="detectionHint">Mostre suas mãos para a câmera</div>
+          </div>
+
+          <!-- Controles -->
+          <div class="controls">
+            <button id="startBtn" class="btn-primary">Iniciar Sistema</button>
+            <button id="clearBtn" class="btn-secondary">Limpar Ecossistema</button>
+            
+            <div class="slider-control">
+              <label for="mutationRate"
+                >Taxa de Mutação: <span id="mutationValue">0.1</span></label
+              >
+              <input
+                type="range"
+                id="mutationRate"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0.1"
+              />
+            </div>
+            
+            <div class="slider-control">
+              <label for="maxCreatures"
+                >Máx. Criaturas: <span id="maxCreaturesValue">5</span></label
+              >
+              <input
+                type="range"
+                id="maxCreatures"
+                min="1"
+                max="10"
+                step="1"
+                value="5"
+              />
+            </div>
+          </div>
         </div>
 
         <!-- Visualização do ecossistema -->
@@ -87,83 +118,6 @@
             <div id="creaturesList"></div>
           </div>
         </div>
-      </div>
-
-      <!-- Controles -->
-      <div class="controls">
-        <button id="startBtn" class="btn-primary">Iniciar Sistema</button>
-        <button id="clearBtn" class="btn-secondary">Limpar Ecossistema</button>
-        
-        <div class="slider-control">
-          <label for="mutationRate"
-            >Taxa de Mutação: <span id="mutationValue">0.1</span></label
-          >
-          <input
-            type="range"
-            id="mutationRate"
-            min="0"
-            max="1"
-            step="0.05"
-            value="0.1"
-          />
-        </div>
-        
-        <div class="slider-control">
-          <label for="maxCreatures"
-            >Máx. Criaturas: <span id="maxCreaturesValue">5</span></label
-          >
-          <input
-            type="range"
-            id="maxCreatures"
-            min="1"
-            max="10"
-            step="1"
-            value="5"
-          />
-        </div>
-
-        <!-- 🆕 Music.AI Controls -->
-        <div class="musicai-controls">
-          <h3>🎼 Music.AI Integration</h3>
-          
-          <div class="toggle-control">
-            <label for="musicAIToggle">
-              <input type="checkbox" id="musicAIToggle" />
-              Ativar Mixagem Profissional
-            </label>
-            <span id="musicAIStatus" class="status-idle">Desativado</span>
-          </div>
-
-          <div class="slider-control">
-            <label for="musicAIInfluence">
-              Influência: <span id="influenceValue">50%</span>
-            </label>
-            <input
-              type="range"
-              id="musicAIInfluence"
-              min="0"
-              max="1"
-              step="0.1"
-              value="0.5"
-            />
-            <small>0% = só gene original | 100% = só mixagem</small>
-          </div>
-
-          <div class="musicai-actions">
-            <button id="showHistoryBtn" class="btn-secondary">
-              📜 Histórico (<span id="historyCount">0</span>)
-            </button>
-            <button id="showMetricsBtn" class="btn-secondary">
-              📊 Métricas
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Árvore genealógica -->
-      <div class="genealogy-section">
-        <h3>Árvore Genealógica</h3>
-        <canvas id="genealogyCanvas"></canvas>
       </div>
     </div>
 
