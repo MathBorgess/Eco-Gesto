@@ -59,7 +59,7 @@ export default class SoundEngine {
     createCreatureFromGesture(gesture) {
         const { features, type, timestamp, source } = gesture;
         
-        // Valores padrão para features (todas vêm das mãos agora)
+        // Valores padrão para features
         const openness = features.openness || 0.3;
         const amplitude = features.amplitude || 0.2;
         const velocity = Math.max(0.001, features.velocity || 0.01);
@@ -90,25 +90,52 @@ export default class SoundEngine {
                 soundProfile = this.createSynthPadSound(features);
         }
         
-        // Calcular volume baseado na altura da mão (Y invertido: topo=0, baixo=1)
-        // Mão no topo (y=0) = volume alto (0.6), mão embaixo (y=1) = volume baixo (0.01)
+        // Validate that soundProfile has instrumentType
+        if (!soundProfile || !soundProfile.instrumentType) {
+            console.warn(`⚠️ soundProfile inválido para tipo ${type}:`, soundProfile);
+            soundProfile = {
+                instrumentType: 'synth',
+                frequency: 440,
+                waveType: 'sine',
+                filterType: 'lowpass',
+                filterFreq: 1000,
+                filterQ: 1,
+                envelope: {
+                    attack: 0.1,
+                    decay: 0.2,
+                    sustain: 0.7,
+                    release: 0.5
+                },
+                lfoRate: 1,
+                lfoDepth: 10
+            };
+        }
+        
         const calculatedVolume = this.mapRange(features.position.y, 0, 1, 0.6, 0.01);
         
         console.log(`🔊 Volume calculado: Y=${features.position.y.toFixed(2)} → Vol=${calculatedVolume.toFixed(2)}`);
+        console.log(`🎵 Sound profile:`, soundProfile);
         
+        // Create DNA with all soundProfile properties spread in
         const dna = {
-            ...soundProfile,
+            ...soundProfile,  // IMPORTANT: Spread soundProfile first to get instrumentType
             volume: this.mapRange(energy, 0, 1, 0.08, 0.4),
             pan: this.mapRange(features.position.x, 0, 1, -0.9, 0.9),
             birthTime: timestamp,
             color: this.generateColorFromSound(soundProfile, features),
             initialPosition: {
-                x: Math.random(), // 0 a 1
-                y: Math.random()  // 0 a 1
+                x: Math.random(),
+                y: Math.random()
             }
         };
         
-        // Criar objeto criatura
+        // Validate DNA
+        if (!dna.instrumentType) {
+            console.error(`❌ DNA não tem instrumentType!`, dna);
+            dna.instrumentType = 'synth';
+        }
+        
+        // Create creature
         const creature = {
             id: `melody_${this.creatureIdCounter++}`,
             name: this.generateInstrumentName(type),
@@ -116,13 +143,13 @@ export default class SoundEngine {
             dna: dna,
             birthTime: timestamp,
             generation: 0,
-            instrumentType: soundProfile.instrumentType,
+            instrumentType: dna.instrumentType,  // Get from dna (which came from soundProfile)
             gestureOrigin: features
         };
 
         console.log('🎵 SoundEngine criou criatura:', creature);
-        console.log('🎵 DNA da criatura:', creature.dna);
-        console.log('🎵 Cor da criatura:', creature.dna.color);
+        console.log('🎵 Instrument Type:', creature.instrumentType);
+        console.log('🎵 DNA instrumentType:', creature.dna.instrumentType);
                 
         return creature;
     }
